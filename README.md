@@ -19,26 +19,6 @@
 
 ---
 
-## 🚀 GitHub & Vercel'e Yükleme Rehberi
-
-### GitHub'a Yükleme
-```bash
-git init
-git add .
-git commit -m "Initial commit - Zenith"
-git branch -M main
-git remote add origin https://github.com/KULLANICI_ADI/zenith.git
-git push -u origin main
-```
-
-### Vercel'e Dağıtım (Deploy)
-1. [Vercel](https://vercel.com) hesabınıza giriş yapın.
-2. **"Add New Project"** butonuna tıklayın ve GitHub kulübünüzdeki `zenith` reposunu seçin.
-3. Build Settings varsayılan ayarlarda kalsın (Framework Preset: Other / Static HTML).
-4. **"Deploy"** butonuna basın. Projeniz saniyeler içinde canlıya alınacaktır!
-
----
-
 ## 🛠️ Teknolojiler
 - **Core**: HTML5, Vanilla JavaScript (ES Modules)
 - **Styling**: Tailwind CSS & Custom Glassmorphism CSS
