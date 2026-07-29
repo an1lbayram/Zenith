@@ -1,0 +1,105 @@
+:root {
+    --color-primary: #10b981; /* Emerald Default */
+    --color-secondary: #34d399;
+}
+
+/* Theme Options */
+.theme-emerald { --color-primary: #10b981; --color-secondary: #34d399; }
+.theme-blue    { --color-primary: #3b82f6; --color-secondary: #60a5fa; }
+.theme-purple  { --color-primary: #8b5cf6; --color-secondary: #a78bfa; }
+.theme-red     { --color-primary: #ef4444; --color-secondary: #f87171; }
+.theme-amber   { --color-primary: #f59e0b; --color-secondary: #fbbf24; }
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #090d16 100%);
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-panel {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+/* Confetti Canvas Overlay */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Pomodoro Timer Circle SVG */
+.timer-circle {
+    transition: stroke-dashoffset 0.4s ease-in-out;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* Toast Animations */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.toast-enter {
+    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Drag over highlight for kanban */
+.drag-over {
+    border-color: var(--color-primary) !important;
+    background-color: rgba(16, 185, 129, 0.08) !important;
+}
+
+/* Line clamp helpers */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

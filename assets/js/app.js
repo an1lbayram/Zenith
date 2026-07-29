@@ -1,0 +1,384 @@
+import { store } from './store.js';
+import { UI } from './ui.js';
+import { Router } from './router.js';
+import { Views } from './views.js';
+import { Utils } from './utils.js';
+
+// App Global Search / Filter State
+window.appState = {
+    taskSearch: '',
+    taskCategory: 'all'
+};
+
+const app = {
+    router: Router,
+    ui: UI,
+    logic: {
+        draggedId: null,
+
+        // Task Filters & Search
+        onTaskSearch: (val) => {
+            window.appState.taskSearch = val;
+            Router.render();
+        },
+
+        setTaskCategory: (cat) => {
+            window.appState.taskCategory = cat;
+            Router.render();
+        },
+
+        // Drag and Drop Status Change
+        onDrop: (e, status) => {
+            e.preventDefault();
+            if (app.logic.draggedId) {
+                store.updateTask(app.logic.draggedId, { status });
+                if (status === 'done') {
+                    store.addXP(10);
+                    app.gamification.fireConfetti();
+                    if (store.state.settings.soundEnabled) Utils.playChime('success');
+                }
+            }
+        },
+
+        moveTaskStatus: (id, status) => {
+            store.updateTask(id, { status });
+            if (status === 'done') {
+                store.addXP(10);
+                app.gamification.fireConfetti();
+                if (store.state.settings.soundEnabled) Utils.playChime('success');
+            }
+        },
+
+        completeTask: (id) => {
+            store.updateTask(id, { status: 'done' });
+            store.addXP(10);
+            app.gamification.fireConfetti();
+            if (store.state.settings.soundEnabled) Utils.playChime('success');
+            UI.showToast('Görev tamamlandı! +10 XP 🎯', 'success');
+        },
+
+        deleteTask: (id) => {
+            const task = store.deleteTask(id);
+            UI.showToast('Görev silindi', 'info', () => {
+                store.addTask(task);
+                UI.showToast('İşlem geri alındı', 'success');
+            });
+        },
+
+        toggleSubtask: (taskId, subtaskId) => {
+            store.toggleSubtask(taskId, subtaskId);
+            // If in edit modal, re-open or update
+            UI.openEditTaskModal(taskId);
+        },
+
+        addSubtaskPrompt: (taskId) => {
+            const text = prompt('Alt görev tanımı:');
+            if (text && text.trim()) {
+                const task = store.state.tasks.find(t => t.id === taskId);
+                if (task) {
+                    const subtasks = task.subtasks || [];
+                    subtasks.push({ id: Utils.generateId(), text: text.trim(), completed: false });
+                    store.updateTask(taskId, { subtasks });
+                    UI.openEditTaskModal(taskId);
+                }
+            }
+        },
+
+        // Habit Handlers
+        deleteHabit: (id) => {
+            if (confirm('Bu alışkanlığı silmek istediğinize emin misiniz?')) {
+                store.deleteHabit(id);
+                UI.showToast('Alışkanlık silindi', 'info');
+                Router.render();
+            }
+        },
+
+        toggleHabitDate: (id, dateStr) => {
+            store.toggleHabitDate(id, dateStr);
+            Router.render();
+        },
+
+        // Quick Templates
+        applyTemplate: (type) => {
+            const templates = {
+                workout: { title: 'Spor Salonu Egzersizi', category: 'health', priority: 'high', notes: 'Isınma 10 dk, Göğüs/Ön kol, Soğuma' },
+                study: { title: 'Ders & Konu Çalışması', category: 'study', priority: 'normal', notes: '2 Pomodoro odaklanma seansı' },
+                shopping: { title: 'Haftalık Alışveriş', category: 'personal', priority: 'normal', notes: 'Sebze, Süt ürünleri, Ev ihtiyaçları' },
+                meeting: { title: 'Haftalık Ekip Toplantısı', category: 'work', priority: 'urgent', notes: 'Raporlar ve gelecek hafta hedefleri' }
+            };
+
+            const t = templates[type];
+            if (t) {
+                const titleInput = document.querySelector('[name="title"]');
+                const categoryInput = document.querySelector('[name="category"]');
+                const priorityInput = document.querySelector('[name="priority"]');
+                const notesInput = document.querySelector('[name="notes"]');
+
+                if (titleInput) titleInput.value = t.title;
+                if (categoryInput) categoryInput.value = t.category;
+                if (priorityInput) priorityInput.value = t.priority;
+                if (notesInput) notesInput.value = t.notes;
+            }
+        },
+
+        // Backup & Export Handlers
+        exportData: () => {
+            const dataStr = store.exportData();
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `zenith_backup_${Utils.toISODateString()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            UI.showToast('Yedek dosyası indirildi! 💾', 'success');
+        },
+
+        importDataPrompt: () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const success = store.importData(event.target.result);
+                    if (success) {
+                        UI.showToast('Veriler başarıyla içeri aktarıldı!', 'success');
+                        Router.render();
+                    } else {
+                        UI.showToast('Hata: Geçersiz yedek dosyası!', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        },
+
+        resetAllData: () => {
+            if (confirm('TÜM GÖREV VE ALIŞKANLIKLAR SİLİNECEK! Emin misiniz?')) {
+                store.resetData();
+            }
+        },
+
+        // Pomodoro State
+        timerInterval: null,
+        timeLeft: 25 * 60,
+        totalDuration: 25 * 60,
+        isRunning: false,
+        modeName: 'Pomodoro',
+
+        initPomodoro: () => {
+            app.logic.updateTimerDisplay();
+        },
+
+        toggleTimer: () => {
+            if (app.logic.isRunning) {
+                app.logic.pauseTimer();
+            } else {
+                app.logic.startTimer();
+            }
+        },
+
+        startTimer: () => {
+            if (app.logic.isRunning) return;
+            app.logic.isRunning = true;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'DURDUR';
+                startBtn.classList.replace('bg-primary', 'bg-amber-500');
+            }
+
+            app.logic.timerInterval = setInterval(() => {
+                app.logic.timeLeft--;
+                app.logic.updateTimerDisplay();
+
+                if (app.logic.timeLeft <= 0) {
+                    clearInterval(app.logic.timerInterval);
+                    app.logic.timerInterval = null;
+                    app.logic.isRunning = false;
+
+                    if (startBtn) {
+                        startBtn.textContent = 'BAŞLAT';
+                        startBtn.classList.replace('bg-amber-500', 'bg-primary');
+                    }
+
+                    if (store.state.settings.soundEnabled) Utils.playChime('timerEnd');
+                    UI.showToast(`${app.logic.modeName} Süresi Doldu! 🎉 (+25 XP)`, 'levelUp');
+                    app.gamification.fireConfetti();
+                    store.addXP(25);
+                    store.logActivity('pomodoro');
+                }
+            }, 1000);
+        },
+
+        pauseTimer: () => {
+            clearInterval(app.logic.timerInterval);
+            app.logic.timerInterval = null;
+            app.logic.isRunning = false;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'DEVAM ET';
+                startBtn.classList.replace('bg-amber-500', 'bg-primary');
+            }
+        },
+
+        resetTimer: () => {
+            clearInterval(app.logic.timerInterval);
+            app.logic.timerInterval = null;
+            app.logic.isRunning = false;
+            app.logic.timeLeft = app.logic.totalDuration;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'BAŞLAT';
+                startBtn.className = 'flex-1 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-base shadow-xl shadow-primary/30 hover:scale-105 transition-all';
+            }
+
+            app.logic.updateTimerDisplay();
+        },
+
+        setTimerMode: (minutes, modeLabel = 'Pomodoro') => {
+            app.logic.resetTimer();
+            app.logic.modeName = modeLabel;
+            app.logic.totalDuration = minutes * 60;
+            app.logic.timeLeft = minutes * 60;
+            const statusEl = document.getElementById('timer-status');
+            if (statusEl) statusEl.textContent = modeLabel.toUpperCase();
+            app.logic.updateTimerDisplay();
+        },
+
+        updateTimerDisplay: () => {
+            const display = document.getElementById('timer-display');
+            const circle = document.getElementById('timer-progress');
+
+            const m = Math.floor(app.logic.timeLeft / 60);
+            const s = app.logic.timeLeft % 60;
+            const formatted = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            if (display) display.textContent = formatted;
+
+            if (circle) {
+                const circumference = 722; // 2 * PI * 115
+                const offset = circumference - (circumference * app.logic.timeLeft) / app.logic.totalDuration;
+                circle.style.strokeDashoffset = offset;
+            }
+        }
+    },
+
+    gamification: {
+        fireConfetti: () => {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899'];
+
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 3,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 12,
+                    size: Math.random() * 6 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    life: 90
+                });
+            }
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        active = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.25; // gravity
+                        p.life--;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+                if (active) requestAnimationFrame(animate);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            };
+            animate();
+        }
+    }
+};
+
+window.app = app;
+
+// Global Event Listeners
+window.addEventListener('taskCreated', () => {
+    app.gamification.fireConfetti();
+});
+
+window.addEventListener('levelUp', (e) => {
+    UI.showToast(`TEBRİKLER! SEVİYE ${e.detail.level} OLDUNUZ! 🎉`, 'levelUp');
+    app.gamification.fireConfetti();
+});
+
+window.addEventListener('achievementUnlocked', (e) => {
+    UI.showToast(`ROZET KAZANILDI: ${e.detail.name} ${e.detail.icon}!`, 'levelUp');
+    app.gamification.fireConfetti();
+});
+
+// Store State Listener
+store.subscribe((state) => {
+    // Header Stats
+    const nameEl = document.getElementById('user-name');
+    const avatarEl = document.getElementById('user-avatar');
+    const xpEl = document.getElementById('user-xp');
+    const badgeEl = document.getElementById('user-level-badge');
+
+    if (nameEl) nameEl.textContent = state.user.name || 'Kullanıcı';
+    if (avatarEl) avatarEl.textContent = state.user.avatar || '⚡';
+    if (xpEl) xpEl.textContent = `${state.xp} XP`;
+    if (badgeEl) badgeEl.textContent = `Lvl ${state.level}`;
+
+    // Auto-update task or dashboard counts if open
+    if (Router.currentRoute === 'tasks' || Router.currentRoute === 'dashboard') {
+        Router.render();
+    }
+});
+
+// Initial Setup
+if (store.state.settings.darkMode) document.documentElement.classList.add('dark');
+UI.setTheme(store.state.settings.theme || 'emerald');
+
+// Start Router
+Router.navigate('dashboard');
+
+// Offline Detector
+window.addEventListener('online', () => {
+    const el = document.getElementById('offline-indicator');
+    if (el) el.classList.add('hidden');
+});
+window.addEventListener('offline', () => {
+    const el = document.getElementById('offline-indicator');
+    if (el) el.classList.remove('hidden');
+});
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+        try {
+            const reg = await navigator.serviceWorker.register('./sw.js');
+            console.info('ServiceWorker registered cleanly:', reg.scope);
+        } catch (err) {
+            console.warn('ServiceWorker registration error:', err);
+        }
+    });
+}
+
+export { app };
