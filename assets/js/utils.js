@@ -369,21 +369,57 @@ export const Utils = {
                 // 12. Binaural Beta (15Hz)
                 case 'binaural_beta':
                     createBinauralBeat(250, 265, 0.07);
-                    break;
-
-                // 13. Sıcak Kafe Ambiyansı (FIXED: Warm dual-band noise + gentle ambient chatter hum modulation)
+                        // 13. Sıcak Kafe Ambiyansı (REDESIGNED: Background Hum + Porcelain Cup Clinks + Espresso Steam Hiss)
                 case 'cafe': {
-                    const { gain: g1 } = createNoiseSource('pink', 'bandpass', 900, 0.1);
-                    const { gain: g2 } = createNoiseSource('brown', 'lowpass', 400, 0.1);
+                    const { gain: g1 } = createNoiseSource('pink', 'lowpass', 750, 0.14);
+                    createNoiseSource('brown', 'lowpass', 350, 0.12);
 
                     const lfo = ctx.createOscillator();
                     const lfoGain = ctx.createGain();
-                    lfo.frequency.setValueAtTime(0.6, ctx.currentTime);
-                    lfoGain.gain.setValueAtTime(0.03, ctx.currentTime);
+                    lfo.frequency.setValueAtTime(0.5, ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(0.04, ctx.currentTime);
                     lfo.connect(lfoGain);
                     lfoGain.connect(g1.gain);
                     lfo.start();
                     Utils.ambientNodes.push(lfo);
+
+                    // Periodic Cup Clinks & Steam Wand Hiss
+                    const cafeInterval = setInterval(() => {
+                        if (Math.random() > 0.4) {
+                            const clinkOsc = ctx.createOscillator();
+                            const clinkGain = ctx.createGain();
+                            clinkOsc.type = 'sine';
+                            const clinkFreq = 2200 + Math.random() * 1200;
+                            clinkOsc.frequency.setValueAtTime(clinkFreq, ctx.currentTime);
+                            clinkGain.gain.setValueAtTime(0.05, ctx.currentTime);
+                            clinkGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+                            clinkOsc.connect(clinkGain);
+                            clinkGain.connect(ctx.destination);
+                            clinkOsc.start();
+                            clinkOsc.stop(ctx.currentTime + 0.08);
+                        }
+
+                        if (Math.random() > 0.8) {
+                            const steamNoise = ctx.createBufferSource();
+                            steamNoise.buffer = Utils.createNoiseBuffer(ctx, 'white');
+                            const filter = ctx.createBiquadFilter();
+                            const gain = ctx.createGain();
+                            filter.type = 'bandpass';
+                            filter.frequency.setValueAtTime(3200, ctx.currentTime);
+                            filter.Q.setValueAtTime(2.0, ctx.currentTime);
+
+                            gain.gain.setValueAtTime(0.01, ctx.currentTime);
+                            gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.3);
+                            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+
+                            steamNoise.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            steamNoise.start();
+                            steamNoise.stop(ctx.currentTime + 1.2);
+                        }
+                    }, 1800);
+                    Utils.ambientIntervals.push(cafeInterval);
                     break;
                 }
 
@@ -406,18 +442,41 @@ export const Utils = {
                     break;
                 }
 
-                // 15. Orman Hışırtısı (FIXED: Modulated breeze canopy + soft leaf rustles)
+                // 15. Orman Hışırtısı (REDESIGNED: Modulated Tree Canopy Breeze + Rustling Leaves)
                 case 'forest': {
-                    const { filter } = createNoiseSource('pink', 'bandpass', 1400, 0.1);
-                    filter.Q.setValueAtTime(1.5, ctx.currentTime);
+                    const { filter } = createNoiseSource('pink', 'bandpass', 1100, 0.12);
+                    filter.Q.setValueAtTime(1.2, ctx.currentTime);
+
                     const lfo = ctx.createOscillator();
                     const lfoGain = ctx.createGain();
-                    lfo.frequency.setValueAtTime(0.3, ctx.currentTime);
-                    lfoGain.gain.setValueAtTime(400, ctx.currentTime);
+                    lfo.frequency.setValueAtTime(0.15, ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(500, ctx.currentTime);
                     lfo.connect(lfoGain);
                     lfoGain.connect(filter.frequency);
                     lfo.start();
                     Utils.ambientNodes.push(lfo);
+
+                    const forestInterval = setInterval(() => {
+                        if (Math.random() > 0.35) {
+                            const leafNoise = ctx.createBufferSource();
+                            leafNoise.buffer = Utils.createNoiseBuffer(ctx, 'pink');
+                            const leafFilter = ctx.createBiquadFilter();
+                            const leafGain = ctx.createGain();
+                            leafFilter.type = 'bandpass';
+                            leafFilter.frequency.setValueAtTime(2200 + Math.random() * 800, ctx.currentTime);
+                            leafFilter.Q.setValueAtTime(3.0, ctx.currentTime);
+
+                            leafGain.gain.setValueAtTime(0.05 + Math.random() * 0.04, ctx.currentTime);
+                            leafGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+
+                            leafNoise.connect(leafFilter);
+                            leafFilter.connect(leafGain);
+                            leafGain.connect(ctx.destination);
+                            leafNoise.start();
+                            leafNoise.stop(ctx.currentTime + 0.18);
+                        }
+                    }, 1400);
+                    Utils.ambientIntervals.push(forestInterval);
                     break;
                 }
 
