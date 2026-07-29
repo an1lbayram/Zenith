@@ -585,13 +585,31 @@ export const Views = {
                         </div>
                     </div>
 
-                    <!-- Ambient Sound Selector -->
-                    <div class="w-full mb-6 flex items-center justify-center gap-2">
-                        <span class="text-xs font-bold text-gray-400">🎵 Ortam Sesi:</span>
-                        <select onchange="app.logic.setAmbientSound(this.value)" class="p-2 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
+                    <!-- Ambient Sound Selector (20 Options) -->
+                    <div class="w-full mb-6 flex flex-col items-center gap-1.5">
+                        <span class="text-xs font-bold text-gray-400">🎵 Prosedürel Ortam Sesi (20 Ses):</span>
+                        <select onchange="app.logic.setAmbientSound(this.value)" class="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
                             <option value="none">Sessiz 🔇</option>
-                            <option value="rain">Yağmur Sesi 🌧️</option>
-                            <option value="focus">432Hz Derin Odak 🧘</option>
+                            <option value="rain">1. Hafif Yağmur 🌧️</option>
+                            <option value="storm">2. Şiddetli Fırtına ⛈️</option>
+                            <option value="ocean">3. Okyanus Dalgaları 🌊</option>
+                            <option value="wind">4. Rüzgar Esintisi 💨</option>
+                            <option value="campfire">5. Kamp Ateşi 🔥</option>
+                            <option value="whitenoise">6. Beyaz Gürültü 📻</option>
+                            <option value="brownnoise">7. Kahverengi Gürültü 🟫</option>
+                            <option value="focus432">8. 432Hz Alfa Odak 🧘</option>
+                            <option value="solfeggio528">9. 528Hz Solfeğiyof Frekansı 🧠</option>
+                            <option value="binaural_alpha">10. Binaural Alfa (10Hz - Zihin Açıcı) 🎧</option>
+                            <option value="binaural_theta">11. Binaural Theta (6Hz - Derin Gevşeme) 😴</option>
+                            <option value="binaural_beta">12. Binaural Beta (15Hz - Konsantrasyon) ⚡</option>
+                            <option value="cafe">13. Sıcak Kafe Ambiyansı ☕</option>
+                            <option value="space">14. Kozmik Uzay Uğultusu 🛸</option>
+                            <option value="forest">15. Orman Hışırtısı 🌲</option>
+                            <option value="train">16. Tren Yolculuğu 🚂</option>
+                            <option value="drop">17. Ritmik Su Damlaları 💧</option>
+                            <option value="birds">18. Zen Kuş Sesleri 🪶</option>
+                            <option value="zenbowl">19. Tibetan Zen Çanı 🌌</option>
+                            <option value="metronome">20. Odak Metronomu (60 BPM) ⏱️</option>
                         </select>
                     </div>
 
