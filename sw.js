@@ -46,6 +46,9 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
+  // Bypass Vercel Analytics & Insights routes
+  if (url.pathname.startsWith('/_vercel')) return;
+
   // Cross-origin (CDNs, Google Fonts, Tailwind) -> Network first with cache fallback
   if (url.origin !== location.origin) {
     event.respondWith(
