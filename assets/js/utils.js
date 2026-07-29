@@ -141,15 +141,15 @@ export const Utils = {
 
         if (type === 'white') {
             for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * 0.05;
+                data[i] = (Math.random() * 2 - 1) * 0.1;
             }
         } else if (type === 'brown') {
             let lastOut = 0.0;
             for (let i = 0; i < bufferSize; i++) {
                 const white = Math.random() * 2 - 1;
-                data[i] = (lastOut + (0.02 * white)) / 1.02;
+                data[i] = (lastOut + (0.05 * white)) / 1.02;
                 lastOut = data[i];
-                data[i] *= 0.15;
+                data[i] *= 0.8;
             }
         } else {
             // Pink noise
@@ -162,7 +162,7 @@ export const Utils = {
                 b3 = 0.86650 * b3 + white * 0.3104856;
                 b4 = 0.55000 * b4 + white * 0.5329522;
                 b5 = -0.7616 * b5 - white * 0.0168980;
-                data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.04;
+                data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.1;
                 b6 = white * 0.115926;
             }
         }
@@ -180,7 +180,7 @@ export const Utils = {
             Utils.ambientAudioCtx = ctx;
 
             // Helper to start looping noise source
-            const createNoiseSource = (noiseType, filterType = 'lowpass', filterFreq = 1000) => {
+            const createNoiseSource = (noiseType, filterType = 'lowpass', filterFreq = 1000, volume = 0.1) => {
                 const buffer = Utils.createNoiseBuffer(ctx, noiseType);
                 const source = ctx.createBufferSource();
                 source.buffer = buffer;
@@ -190,15 +190,19 @@ export const Utils = {
                 filter.type = filterType;
                 filter.frequency.setValueAtTime(filterFreq, ctx.currentTime);
 
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(volume, ctx.currentTime);
+
                 source.connect(filter);
-                filter.connect(ctx.destination);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
                 source.start();
                 Utils.ambientNodes.push(source);
-                return { source, filter };
+                return { source, filter, gain };
             };
 
             // Helper to create Binaural Beats (Stereo Left / Right)
-            const createBinauralBeat = (freqLeft, freqRight, vol = 0.05) => {
+            const createBinauralBeat = (freqLeft, freqRight, vol = 0.06) => {
                 const merger = ctx.createChannelMerger(2);
 
                 const oscL = ctx.createOscillator();
@@ -206,14 +210,14 @@ export const Utils = {
                 oscL.frequency.setValueAtTime(freqLeft, ctx.currentTime);
                 gainL.gain.setValueAtTime(vol, ctx.currentTime);
                 oscL.connect(gainL);
-                gainL.connect(merger, 0, 0); // Left channel
+                gainL.connect(merger, 0, 0);
 
                 const oscR = ctx.createOscillator();
                 const gainR = ctx.createGain();
                 oscR.frequency.setValueAtTime(freqRight, ctx.currentTime);
                 gainR.gain.setValueAtTime(vol, ctx.currentTime);
                 oscR.connect(gainR);
-                gainR.connect(merger, 0, 1); // Right channel
+                gainR.connect(merger, 0, 1);
 
                 merger.connect(ctx.destination);
                 oscL.start();
@@ -224,31 +228,44 @@ export const Utils = {
             switch (type) {
                 // 1. Hafif Yağmur
                 case 'rain':
-                    createNoiseSource('pink', 'lowpass', 1000);
+                    createNoiseSource('pink', 'lowpass', 1200, 0.12);
                     break;
 
-                // 2. Şiddetli Fırtına
+                // 2. Şiddetli Fırtına (FIXED: Heavy rain + periodic lowpass thunder bursts)
                 case 'storm': {
-                    createNoiseSource('pink', 'lowpass', 450);
-                    // Thunder Sub-bass rumble
-                    const thunderOsc = ctx.createOscillator();
-                    const thunderGain = ctx.createGain();
-                    thunderOsc.type = 'sawtooth';
-                    thunderOsc.frequency.setValueAtTime(55, ctx.currentTime);
-                    thunderGain.gain.setValueAtTime(0.04, ctx.currentTime);
-                    thunderOsc.connect(thunderGain);
-                    thunderGain.connect(ctx.destination);
-                    thunderOsc.start();
-                    Utils.ambientNodes.push(thunderOsc);
+                    createNoiseSource('pink', 'lowpass', 800, 0.14);
+
+                    // Periodic Thunder Rumbles
+                    const thunderInterval = setInterval(() => {
+                        if (Math.random() > 0.45) {
+                            const thunderNoise = ctx.createBufferSource();
+                            thunderNoise.buffer = Utils.createNoiseBuffer(ctx, 'brown');
+                            const filter = ctx.createBiquadFilter();
+                            const gain = ctx.createGain();
+                            filter.type = 'lowpass';
+                            filter.frequency.setValueAtTime(220, ctx.currentTime);
+
+                            gain.gain.setValueAtTime(0.01, ctx.currentTime);
+                            gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.3);
+                            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+
+                            thunderNoise.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            thunderNoise.start();
+                            thunderNoise.stop(ctx.currentTime + 2.5);
+                        }
+                    }, 4000);
+                    Utils.ambientIntervals.push(thunderInterval);
                     break;
                 }
 
                 // 3. Okyanus Dalgaları
                 case 'ocean': {
-                    const { filter } = createNoiseSource('pink', 'lowpass', 600);
+                    const { filter } = createNoiseSource('pink', 'lowpass', 600, 0.12);
                     const lfo = ctx.createOscillator();
                     const lfoGain = ctx.createGain();
-                    lfo.frequency.setValueAtTime(0.12, ctx.currentTime); // 0.12Hz wave cycle
+                    lfo.frequency.setValueAtTime(0.12, ctx.currentTime);
                     lfoGain.gain.setValueAtTime(350, ctx.currentTime);
                     lfo.connect(lfoGain);
                     lfoGain.connect(filter.frequency);
@@ -259,12 +276,12 @@ export const Utils = {
 
                 // 4. Rüzgar Esintisi
                 case 'wind': {
-                    const { filter } = createNoiseSource('pink', 'bandpass', 500);
-                    filter.Q.setValueAtTime(3.0, ctx.currentTime);
+                    const { filter } = createNoiseSource('pink', 'bandpass', 600, 0.12);
+                    filter.Q.setValueAtTime(2.5, ctx.currentTime);
                     const lfo = ctx.createOscillator();
                     const lfoGain = ctx.createGain();
-                    lfo.frequency.setValueAtTime(0.25, ctx.currentTime);
-                    lfoGain.gain.setValueAtTime(300, ctx.currentTime);
+                    lfo.frequency.setValueAtTime(0.2, ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(400, ctx.currentTime);
                     lfo.connect(lfoGain);
                     lfoGain.connect(filter.frequency);
                     lfo.start();
@@ -272,36 +289,43 @@ export const Utils = {
                     break;
                 }
 
-                // 5. Kamp Ateşi
+                // 5. Kamp Ateşi (FIXED: Warm brown noise base + realistic micro crackles & pops)
                 case 'campfire': {
-                    createNoiseSource('brown', 'lowpass', 600);
-                    // Random crackle pops
+                    createNoiseSource('brown', 'lowpass', 500, 0.08);
+
                     const crackleInterval = setInterval(() => {
-                        if (Math.random() > 0.4) {
-                            const popOsc = ctx.createOscillator();
-                            const popGain = ctx.createGain();
-                            popOsc.type = 'triangle';
-                            popOsc.frequency.setValueAtTime(800 + Math.random() * 1200, ctx.currentTime);
-                            popGain.gain.setValueAtTime(0.03, ctx.currentTime);
-                            popGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
-                            popOsc.connect(popGain);
-                            popGain.connect(ctx.destination);
-                            popOsc.start();
-                            popOsc.stop(ctx.currentTime + 0.03);
+                        if (Math.random() > 0.3) {
+                            const popSource = ctx.createBufferSource();
+                            popSource.buffer = Utils.createNoiseBuffer(ctx, 'white');
+                            const filter = ctx.createBiquadFilter();
+                            const gain = ctx.createGain();
+                            filter.type = 'bandpass';
+                            filter.frequency.setValueAtTime(1500 + Math.random() * 2000, ctx.currentTime);
+                            filter.Q.setValueAtTime(5.0, ctx.currentTime);
+
+                            const popVol = 0.04 + Math.random() * 0.08;
+                            gain.gain.setValueAtTime(popVol, ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+                            popSource.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            popSource.start();
+                            popSource.stop(ctx.currentTime + 0.04);
                         }
-                    }, 120);
+                    }, 90);
                     Utils.ambientIntervals.push(crackleInterval);
                     break;
                 }
 
                 // 6. Beyaz Gürültü
                 case 'whitenoise':
-                    createNoiseSource('white', 'lowpass', 8000);
+                    createNoiseSource('white', 'lowpass', 8000, 0.08);
                     break;
 
-                // 7. Kahverengi Gürültü
+                // 7. Kahverengi Gürültü (FIXED: Rich, audible deep focus brown noise)
                 case 'brownnoise':
-                    createNoiseSource('brown', 'lowpass', 400);
+                    createNoiseSource('brown', 'lowpass', 600, 0.18);
                     break;
 
                 // 8. 432Hz Derin Odak
@@ -310,7 +334,7 @@ export const Utils = {
                     const gain = ctx.createGain();
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(432, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start();
@@ -324,7 +348,7 @@ export const Utils = {
                     const gain = ctx.createGain();
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(528, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start();
@@ -334,24 +358,34 @@ export const Utils = {
 
                 // 10. Binaural Alpha (10Hz)
                 case 'binaural_alpha':
-                    createBinauralBeat(200, 210, 0.05);
+                    createBinauralBeat(200, 210, 0.07);
                     break;
 
                 // 11. Binaural Theta (6Hz)
                 case 'binaural_theta':
-                    createBinauralBeat(150, 156, 0.05);
+                    createBinauralBeat(150, 156, 0.07);
                     break;
 
                 // 12. Binaural Beta (15Hz)
                 case 'binaural_beta':
-                    createBinauralBeat(250, 265, 0.05);
+                    createBinauralBeat(250, 265, 0.07);
                     break;
 
-                // 13. Sıcak Kafe Ambiyansı
-                case 'cafe':
-                    createNoiseSource('pink', 'bandpass', 1200);
-                    createNoiseSource('white', 'bandpass', 3500);
+                // 13. Sıcak Kafe Ambiyansı (FIXED: Warm dual-band noise + gentle ambient chatter hum modulation)
+                case 'cafe': {
+                    const { gain: g1 } = createNoiseSource('pink', 'bandpass', 900, 0.1);
+                    const { gain: g2 } = createNoiseSource('brown', 'lowpass', 400, 0.1);
+
+                    const lfo = ctx.createOscillator();
+                    const lfoGain = ctx.createGain();
+                    lfo.frequency.setValueAtTime(0.6, ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(0.03, ctx.currentTime);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(g1.gain);
+                    lfo.start();
+                    Utils.ambientNodes.push(lfo);
                     break;
+                }
 
                 // 14. Kozmik Uzay Uğultusu
                 case 'space': {
@@ -360,9 +394,9 @@ export const Utils = {
                     const gain = ctx.createGain();
                     osc1.type = 'sine';
                     osc2.type = 'sine';
-                    osc1.frequency.setValueAtTime(60, ctx.currentTime);
-                    osc2.frequency.setValueAtTime(120.5, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                    osc1.frequency.setValueAtTime(65, ctx.currentTime);
+                    osc2.frequency.setValueAtTime(130, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
                     osc1.connect(gain);
                     osc2.connect(gain);
                     gain.connect(ctx.destination);
@@ -372,29 +406,52 @@ export const Utils = {
                     break;
                 }
 
-                // 15. Orman Hışırtısı
+                // 15. Orman Hışırtısı (FIXED: Modulated breeze canopy + soft leaf rustles)
                 case 'forest': {
-                    createNoiseSource('pink', 'highpass', 1800);
+                    const { filter } = createNoiseSource('pink', 'bandpass', 1400, 0.1);
+                    filter.Q.setValueAtTime(1.5, ctx.currentTime);
+                    const lfo = ctx.createOscillator();
+                    const lfoGain = ctx.createGain();
+                    lfo.frequency.setValueAtTime(0.3, ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(400, ctx.currentTime);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(filter.frequency);
+                    lfo.start();
+                    Utils.ambientNodes.push(lfo);
                     break;
                 }
 
-                // 16. Tren Yolculuğu
+                // 16. Tren Yolculuğu (FIXED: Authentic 4-beat "clack-clack" rhythmic rail pulses)
                 case 'train': {
+                    createNoiseSource('brown', 'lowpass', 350, 0.08); // Train hum base
+
                     const trainInterval = setInterval(() => {
-                        const trainNoise = ctx.createBufferSource();
-                        trainNoise.buffer = Utils.createNoiseBuffer(ctx, 'brown');
-                        const filter = ctx.createBiquadFilter();
-                        const gain = ctx.createGain();
-                        filter.type = 'lowpass';
-                        filter.frequency.setValueAtTime(300, ctx.currentTime);
-                        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-                        trainNoise.connect(filter);
-                        filter.connect(gain);
-                        gain.connect(ctx.destination);
-                        trainNoise.start();
-                        trainNoise.stop(ctx.currentTime + 0.25);
-                    }, 650);
+                        const playClack = (delayMs) => {
+                            setTimeout(() => {
+                                const clackNoise = ctx.createBufferSource();
+                                clackNoise.buffer = Utils.createNoiseBuffer(ctx, 'pink');
+                                const filter = ctx.createBiquadFilter();
+                                const gain = ctx.createGain();
+                                filter.type = 'bandpass';
+                                filter.frequency.setValueAtTime(450, ctx.currentTime);
+                                filter.Q.setValueAtTime(3.0, ctx.currentTime);
+
+                                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+                                clackNoise.connect(filter);
+                                filter.connect(gain);
+                                gain.connect(ctx.destination);
+                                clackNoise.start();
+                                clackNoise.stop(ctx.currentTime + 0.08);
+                            }, delayMs);
+                        };
+
+                        playClack(0);
+                        playClack(110);
+                        playClack(260);
+                        playClack(370);
+                    }, 1200);
                     Utils.ambientIntervals.push(trainInterval);
                     break;
                 }
@@ -402,43 +459,58 @@ export const Utils = {
                 // 17. Ritmik Su Damlaları
                 case 'drop': {
                     const dropInterval = setInterval(() => {
-                        if (Math.random() > 0.3) {
+                        if (Math.random() > 0.35) {
                             const dropOsc = ctx.createOscillator();
                             const dropGain = ctx.createGain();
                             dropOsc.type = 'sine';
-                            const startFreq = 800 + Math.random() * 600;
+                            const startFreq = 700 + Math.random() * 700;
                             dropOsc.frequency.setValueAtTime(startFreq, ctx.currentTime);
-                            dropOsc.frequency.exponentialRampToValueAtTime(startFreq * 1.5, ctx.currentTime + 0.08);
-                            dropGain.gain.setValueAtTime(0.04, ctx.currentTime);
-                            dropGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                            dropOsc.frequency.exponentialRampToValueAtTime(startFreq * 1.6, ctx.currentTime + 0.07);
+                            dropGain.gain.setValueAtTime(0.06, ctx.currentTime);
+                            dropGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
                             dropOsc.connect(dropGain);
                             dropGain.connect(ctx.destination);
                             dropOsc.start();
-                            dropOsc.stop(ctx.currentTime + 0.08);
+                            dropOsc.stop(ctx.currentTime + 0.07);
                         }
-                    }, 500);
+                    }, 550);
                     Utils.ambientIntervals.push(dropInterval);
                     break;
                 }
 
-                // 18. Zen Kuş Sesi İmpulsları
+                // 18. Zen Kuş Sesleri (FIXED: Realistic frequency modulated FM songbird chirps)
                 case 'birds': {
                     const birdInterval = setInterval(() => {
-                        if (Math.random() > 0.6) {
-                            const birdOsc = ctx.createOscillator();
-                            const birdGain = ctx.createGain();
-                            birdOsc.type = 'sine';
-                            const freq = 2400 + Math.random() * 1000;
-                            birdOsc.frequency.setValueAtTime(freq, ctx.currentTime);
-                            birdOsc.frequency.exponentialRampToValueAtTime(freq + 400, ctx.currentTime + 0.1);
-                            birdGain.gain.setValueAtTime(0.03, ctx.currentTime);
-                            birdGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-                            birdOsc.connect(birdGain);
-                            birdGain.connect(ctx.destination);
-                            birdOsc.start();
-                            birdOsc.stop(ctx.currentTime + 0.12);
+                        if (Math.random() > 0.4) {
+                            const carrier = ctx.createOscillator();
+                            const modulator = ctx.createOscillator();
+                            const modGain = ctx.createGain();
+                            const mainGain = ctx.createGain();
+
+                            const baseFreq = 2600 + Math.random() * 800;
+                            carrier.type = 'sine';
+                            carrier.frequency.setValueAtTime(baseFreq, ctx.currentTime);
+                            carrier.frequency.exponentialRampToValueAtTime(baseFreq + 350, ctx.currentTime + 0.14);
+
+                            modulator.type = 'sine';
+                            modulator.frequency.setValueAtTime(25, ctx.currentTime); // Fast vibrato
+                            modGain.gain.setValueAtTime(150, ctx.currentTime);
+
+                            modulator.connect(modGain);
+                            modGain.connect(carrier.frequency);
+
+                            mainGain.gain.setValueAtTime(0.05, ctx.currentTime);
+                            mainGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
+
+                            carrier.connect(mainGain);
+                            mainGain.connect(ctx.destination);
+
+                            carrier.start();
+                            modulator.start();
+                            carrier.stop(ctx.currentTime + 0.14);
+                            modulator.stop(ctx.currentTime + 0.14);
                         }
-                    }, 1200);
+                    }, 2200);
                     Utils.ambientIntervals.push(birdInterval);
                     break;
                 }
@@ -450,25 +522,24 @@ export const Utils = {
                         const gain = ctx.createGain();
                         osc.type = 'sine';
                         osc.frequency.setValueAtTime(216, ctx.currentTime);
-                        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4.0);
+                        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4.5);
                         osc.connect(gain);
                         gain.connect(ctx.destination);
                         osc.start();
-                        osc.stop(ctx.currentTime + 4.0);
+                        osc.stop(ctx.currentTime + 4.5);
                     }, 5000);
 
-                    // Initial ring
                     const osc0 = ctx.createOscillator();
                     const gain0 = ctx.createGain();
                     osc0.type = 'sine';
                     osc0.frequency.setValueAtTime(216, ctx.currentTime);
-                    gain0.gain.setValueAtTime(0.08, ctx.currentTime);
-                    gain0.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4.0);
+                    gain0.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain0.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4.5);
                     osc0.connect(gain0);
                     gain0.connect(ctx.destination);
                     osc0.start();
-                    osc0.stop(ctx.currentTime + 4.0);
+                    osc0.stop(ctx.currentTime + 4.5);
 
                     Utils.ambientIntervals.push(bowlInterval);
                     break;
@@ -479,21 +550,21 @@ export const Utils = {
                     const metroInterval = setInterval(() => {
                         const tickOsc = ctx.createOscillator();
                         const tickGain = ctx.createGain();
-                        tickOsc.type = 'square';
-                        tickOsc.frequency.setValueAtTime(1000, ctx.currentTime);
-                        tickGain.gain.setValueAtTime(0.03, ctx.currentTime);
-                        tickGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+                        tickOsc.type = 'sine';
+                        tickOsc.frequency.setValueAtTime(1200, ctx.currentTime);
+                        tickGain.gain.setValueAtTime(0.08, ctx.currentTime);
+                        tickGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
                         tickOsc.connect(tickGain);
                         tickGain.connect(ctx.destination);
                         tickOsc.start();
-                        tickOsc.stop(ctx.currentTime + 0.02);
-                    }, 1000); // 60 BPM = 1 tick per second
+                        tickOsc.stop(ctx.currentTime + 0.03);
+                    }, 1000);
                     Utils.ambientIntervals.push(metroInterval);
                     break;
                 }
 
                 default:
-                    createNoiseSource('pink', 'lowpass', 1000);
+                    createNoiseSource('pink', 'lowpass', 1200, 0.1);
                     break;
             }
         } catch (e) {
