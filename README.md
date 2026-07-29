@@ -120,7 +120,7 @@
 ## 📁 Proje Klasör Yapısı
 
 ```
-To-Do App/
+Zenith/
 ├── index.html              # Ana HTML giriş noktası & PWA etiketleri
 ├── manifest.json           # PWA Manifest dosyası
 ├── sw.js                   # Service Worker çevrimdışı önbellekleme

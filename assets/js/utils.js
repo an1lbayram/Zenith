@@ -369,7 +369,9 @@ export const Utils = {
                 // 12. Binaural Beta (15Hz)
                 case 'binaural_beta':
                     createBinauralBeat(250, 265, 0.07);
-                        // 13. Kıyı Kumsalı Dalgaları (shore)
+                    break;
+
+                // 13. Kıyı Kumsalı Dalgaları (shore)
                 case 'shore': {
                     const { filter } = createNoiseSource('pink', 'lowpass', 480, 0.14);
                     const lfo = ctx.createOscillator();

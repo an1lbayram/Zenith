@@ -439,13 +439,13 @@ export const Views = {
         const renderRewardCard = (r) => {
             const canAfford = currentXP >= r.xpCost;
             return `
-                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700/80 relative overflow-hidden">
+                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700/80 relative overflow-hidden" data-reward-id="${Utils.sanitize(r.id)}" data-xp-cost="${Utils.sanitize(r.xpCost)}" data-reward-title="${Utils.sanitize(r.title)}">
                     <div>
                         <div class="flex justify-between items-start mb-4">
                             <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl">
                                 ${r.icon || '🎁'}
                             </div>
-                            <button onclick="app.logic.deleteReward('${r.id}')" class="text-gray-400 hover:text-rose-500 p-1">
+                            <button data-action="delete-reward" class="text-gray-400 hover:text-rose-500 p-1">
                                 🗑️
                             </button>
                         </div>
@@ -456,7 +456,7 @@ export const Views = {
                         <span class="text-sm font-extrabold text-amber-500 flex items-center gap-1">
                             ⚡ ${r.xpCost} XP
                         </span>
-                        <button onclick="app.logic.buyReward('${r.id}', ${r.xpCost}, '${Utils.sanitize(r.title)}')" 
+                        <button data-action="buy-reward"
                             class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${canAfford ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95' : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}" ${!canAfford ? 'disabled' : ''}>
                             ${canAfford ? 'Satın Al / Harca' : 'Yetersiz XP'}
                         </button>
@@ -483,7 +483,7 @@ export const Views = {
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div id="shop-rewards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 ${rewards.map(renderRewardCard).join('')}
             </div>
         `;
@@ -733,5 +733,23 @@ export const Views = {
         });
     },
 
-    setupHabitEvents: () => {}
+    setupHabitEvents: () => {},
+
+    setupShopEvents: () => {
+        const grid = document.getElementById('shop-rewards-grid');
+        if (!grid) return;
+        grid.addEventListener('click', (e) => {
+            const card = e.target.closest('[data-reward-id]');
+            if (!card) return;
+            if (!window.app || !window.app.logic) return;
+
+            const { rewardId, xpCost, rewardTitle } = card.dataset;
+
+            if (e.target.closest('[data-action="delete-reward"]')) {
+                window.app.logic.deleteReward(rewardId);
+            } else if (e.target.closest('[data-action="buy-reward"]')) {
+                window.app.logic.buyReward(rewardId, Number(xpCost), rewardTitle);
+            }
+        });
+    }
 };

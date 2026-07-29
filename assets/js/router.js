@@ -61,6 +61,7 @@ export const Router = {
                 case 'shop':
                     title.textContent = 'XP Ödül Marketi';
                     container.innerHTML = Views.Shop();
+                    Views.setupShopEvents();
                     break;
 
                 case 'journal':

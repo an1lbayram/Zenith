@@ -1,4 +1,3 @@
-import { db } from './firebase.js';
 import { Utils } from './utils.js';
 
 const INITIAL_ACHIEVEMENTS = [
@@ -175,7 +174,6 @@ class Store {
         this.state.tasks.unshift(newTask);
         this.notify();
         this.checkAchievements();
-        this.syncFirebase('tasks', 'add', newTask);
         return newTask;
     }
 
@@ -193,7 +191,6 @@ class Store {
             this.state.tasks[index] = updated;
             this.notify();
             this.checkAchievements();
-            this.syncFirebase('tasks', 'update', updated);
         }
     }
 
@@ -201,7 +198,6 @@ class Store {
         const task = this.state.tasks.find(t => t.id === id);
         this.state.tasks = this.state.tasks.filter(t => t.id !== id);
         this.notify();
-        this.syncFirebase('tasks', 'delete', { id });
         return task;
     }
 
@@ -405,9 +401,6 @@ class Store {
         location.reload();
     }
 
-    async syncFirebase(collectionName, action, data) {
-        if (!db || !this.state.user) return;
-    }
 }
 
 export const store = new Store();
