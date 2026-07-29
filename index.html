@@ -68,8 +68,8 @@
         <nav class="hidden md:flex flex-col w-20 lg:w-64 glass-panel border-r z-20 transition-all duration-300">
             <!-- App Logo / Title -->
             <div class="p-6 flex items-center justify-center lg:justify-start gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-emerald-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/30 cursor-pointer" onclick="app.router.navigate('dashboard')">
-                    Z
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-emerald-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/30 cursor-pointer overflow-hidden p-0.5" onclick="app.router.navigate('dashboard')">
+                    <img src="assets/icons/favicon.png" alt="Zenith Clock Logo" class="w-full h-full object-cover rounded-xl" onerror="this.outerHTML='<span class=\'font-black text-xl\'>⏱️</span>'">
                 </div>
                 <div class="hidden lg:block">
                     <span class="font-extrabold text-xl tracking-tight text-gray-900 dark:text-white cursor-pointer" onclick="app.router.navigate('dashboard')">Zenith</span>
