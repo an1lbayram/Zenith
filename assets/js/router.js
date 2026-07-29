@@ -53,6 +53,21 @@ export const Router = {
                     Views.setupHabitEvents();
                     break;
 
+                case 'calendar':
+                    title.textContent = 'Takvim & Planlayıcı';
+                    container.innerHTML = Views.Calendar();
+                    break;
+
+                case 'shop':
+                    title.textContent = 'XP Ödül Marketi';
+                    container.innerHTML = Views.Shop();
+                    break;
+
+                case 'journal':
+                    title.textContent = 'Günlük & Zihin Notları';
+                    container.innerHTML = Views.Journal();
+                    break;
+
                 case 'focus':
                     title.textContent = 'Odak Modu (Pomodoro)';
                     container.innerHTML = Views.Focus();

@@ -10,6 +10,13 @@ const INITIAL_ACHIEVEMENTS = [
     { id: 'level_5', name: 'Yükselen Yıldız', desc: 'Seviye 5\'e ulaş', icon: '👑', unlocked: false }
 ];
 
+const DEFAULT_REWARDS = [
+    { id: 'r1', title: '1 Saat Oyun Oyna 🎮', xpCost: 100, icon: '🎮' },
+    { id: 'r2', title: 'Kahve & Tatlı Molası ☕', xpCost: 50, icon: '☕' },
+    { id: 'r3', title: '1 Bölüm Dizi İzle 🎬', xpCost: 80, icon: '🎬' },
+    { id: 'r4', title: 'Hafta Sonu Dinlenmesi 🏖️', xpCost: 200, icon: '🏖️' }
+];
+
 const DEFAULT_DEMO_TASKS = [
     {
         id: 'demo_1',
@@ -18,7 +25,7 @@ const DEFAULT_DEMO_TASKS = [
         priority: 'high',
         status: 'todo',
         dueDate: Utils.toISODateString(),
-        notes: 'Görev, Alışkanlık ve Odak modlarını incele.',
+        notes: 'Görev, Alışkanlık, Takvim ve Odak modlarını incele.',
         subtasks: [
             { id: 's1', text: 'Yeni bir görev ekle', completed: false },
             { id: 's2', text: 'Pomodoro zamanlayıcısını başlat', completed: false }
@@ -71,6 +78,14 @@ class Store {
             },
             tasks: [...DEFAULT_DEMO_TASKS],
             habits: [...DEFAULT_DEMO_HABITS],
+            rewards: [...DEFAULT_REWARDS],
+            journalEntries: {
+                [Utils.toISODateString()]: {
+                    dateStr: Utils.toISODateString(),
+                    mood: '🚀',
+                    note: 'Bugün Zenith ile harika bir başlangıç yaptım!'
+                }
+            },
             activityLog: [
                 { id: 'act_1', type: 'task_complete', dateStr: Utils.toISODateString(), timestamp: Date.now() }
             ],
@@ -80,8 +95,8 @@ class Store {
                 darkMode: false,
                 soundEnabled: true
             },
-            xp: 20,
-            level: 1
+            xp: 120,
+            level: 2
         };
 
         this.listeners = [];
@@ -90,7 +105,7 @@ class Store {
 
     loadFromStorage() {
         try {
-            const saved = localStorage.getItem('zenith_state_v2');
+            const saved = localStorage.getItem('zenith_state_v3');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.state = {
@@ -100,6 +115,8 @@ class Store {
                     settings: { ...this.state.settings, ...(parsed.settings || {}) },
                     tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [...DEFAULT_DEMO_TASKS],
                     habits: Array.isArray(parsed.habits) ? parsed.habits : [...DEFAULT_DEMO_HABITS],
+                    rewards: Array.isArray(parsed.rewards) ? parsed.rewards : [...DEFAULT_REWARDS],
+                    journalEntries: (parsed.journalEntries && typeof parsed.journalEntries === 'object') ? parsed.journalEntries : {},
                     activityLog: Array.isArray(parsed.activityLog) ? parsed.activityLog : [],
                     achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [...INITIAL_ACHIEVEMENTS]
                 };
@@ -111,7 +128,7 @@ class Store {
 
     saveToStorage() {
         try {
-            localStorage.setItem('zenith_state_v2', JSON.stringify(this.state));
+            localStorage.setItem('zenith_state_v3', JSON.stringify(this.state));
         } catch (e) {
             console.error('Storage save error:', e);
         }
@@ -233,17 +250,14 @@ class Store {
         const existsIndex = dates.indexOf(dateStr);
 
         if (existsIndex !== -1) {
-            // Uncheck
             dates.splice(existsIndex, 1);
         } else {
-            // Check
             dates.push(dateStr);
             this.addXP(15);
             this.logActivity('habit_complete');
             if (this.state.settings.soundEnabled) Utils.playChime('success');
         }
 
-        // Recalculate Streak
         habit.streak = this.calculateStreak(dates);
         habit.completedDates = dates;
 
@@ -258,7 +272,6 @@ class Store {
         let streak = 0;
         let checkDate = new Date();
 
-        // Check if today or yesterday is completed
         const todayStr = Utils.toISODateString(checkDate);
         checkDate.setDate(checkDate.getDate() - 1);
         const yesterdayStr = Utils.toISODateString(checkDate);
@@ -281,6 +294,42 @@ class Store {
         return streak;
     }
 
+    // Reward Shop Actions
+    addReward(rewardData) {
+        const newReward = {
+            id: Utils.generateId(),
+            title: rewardData.title || 'Özel Ödül',
+            xpCost: parseInt(rewardData.xpCost) || 50,
+            icon: rewardData.icon || '🎁'
+        };
+        this.state.rewards.unshift(newReward);
+        this.notify();
+        return newReward;
+    }
+
+    deleteReward(id) {
+        this.state.rewards = this.state.rewards.filter(r => r.id !== id);
+        this.notify();
+    }
+
+    spendXP(amount, rewardTitle) {
+        if (this.state.xp >= amount) {
+            this.state.xp -= amount;
+            if (this.state.settings.soundEnabled) Utils.playChime('purchase');
+            this.notify();
+            return true;
+        }
+        return false;
+    }
+
+    // Daily Journal & Mood Actions
+    saveJournalEntry(dateStr, mood, note) {
+        this.state.journalEntries = this.state.journalEntries || {};
+        this.state.journalEntries[dateStr] = { dateStr, mood, note };
+        this.addXP(10); // Reward for daily reflection
+        this.notify();
+    }
+
     // Activity Log Helper
     logActivity(type) {
         const logEntry = {
@@ -290,7 +339,6 @@ class Store {
             timestamp: Date.now()
         };
         this.state.activityLog.unshift(logEntry);
-        // Keep last 300 activities
         if (this.state.activityLog.length > 300) {
             this.state.activityLog = this.state.activityLog.slice(0, 300);
         }
@@ -334,7 +382,6 @@ class Store {
         if (changed) this.notify();
     }
 
-    // Export & Import Data Backup
     exportData() {
         return JSON.stringify(this.state, null, 2);
     }
@@ -354,14 +401,12 @@ class Store {
     }
 
     resetData() {
-        localStorage.removeItem('zenith_state_v2');
+        localStorage.removeItem('zenith_state_v3');
         location.reload();
     }
 
-    // Firebase Sync Stub
     async syncFirebase(collectionName, action, data) {
         if (!db || !this.state.user) return;
-        // Simple firestore sync when user configures API keys
     }
 }
 

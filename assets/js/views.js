@@ -33,12 +33,15 @@ export const Views = {
                             Bugün tamamlanmayı bekleyen <span class="font-bold text-primary">${stats.pending} görev</span> ve <span class="font-bold text-emerald-500">${habits.length - habitsDoneToday} alışkanlık</span> var.
                         </p>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="app.ui.openQuickAdd()" class="px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/30 hover:scale-105 transition-transform flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="app.ui.openQuickAdd()" class="px-4 py-2.5 rounded-2xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/30 hover:scale-105 transition-transform flex items-center gap-1.5">
                             <span>+</span> Görev Ekle
                         </button>
-                        <button onclick="app.ui.openAddHabitModal()" class="px-5 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 hover:scale-105 transition-transform flex items-center gap-2">
+                        <button onclick="app.ui.openAddHabitModal()" class="px-4 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 hover:scale-105 transition-transform flex items-center gap-1.5">
                             <span>🌱</span> Alışkanlık Ekle
+                        </button>
+                        <button onclick="app.router.navigate('shop')" class="px-4 py-2.5 rounded-2xl bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-500/30 hover:scale-105 transition-transform flex items-center gap-1.5">
+                            <span>🛍️</span> Ödül Marketi
                         </button>
                     </div>
                 </div>
@@ -79,13 +82,12 @@ export const Views = {
                         <span class="p-2 rounded-xl bg-purple-500/10 text-purple-500">👑</span>
                     </div>
                     <div class="text-3xl font-black text-primary mt-3">Lvl ${store.state.level}</div>
-                    <div class="text-xs text-gray-400 mt-1">${store.state.xp} XP toplam</div>
+                    <div class="text-xs text-gray-400 mt-1">${store.state.xp} XP kullanılabilir</div>
                 </div>
             </div>
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Activity Heatmap -->
                 <div class="glass-panel p-6 rounded-3xl flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
@@ -96,7 +98,6 @@ export const Views = {
                     <div id="heatmap-container" class="w-full overflow-x-auto py-2"></div>
                 </div>
 
-                <!-- Category Pie Chart -->
                 <div class="glass-panel p-6 rounded-3xl flex flex-col">
                     <h3 class="font-bold text-lg mb-4 text-gray-900 dark:text-white flex items-center gap-2">
                         <span>🎯</span> Kategori Dağılımı
@@ -168,7 +169,6 @@ export const Views = {
                             ` : ''}
                         </div>
 
-                        <!-- Action buttons -->
                         <div class="flex items-center gap-1 opacity-90 md:opacity-0 group-hover:opacity-100 transition-opacity">
                             <button onclick="app.ui.openEditTaskModal('${t.id}')" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-primary transition-colors" title="Düzenle">
                                 ✏️
@@ -179,7 +179,6 @@ export const Views = {
                         </div>
                     </div>
 
-                    <!-- Quick status switch bar -->
                     <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700/50 flex gap-2">
                         ${t.status !== 'todo' ? `
                             <button onclick="app.logic.moveTaskStatus('${t.id}', 'todo')" class="flex-1 py-1 text-[11px] font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200">
@@ -202,7 +201,6 @@ export const Views = {
         };
 
         return `
-            <!-- Search & Filter Bar -->
             <div class="glass-panel p-4 rounded-2xl mb-6 flex flex-col md:flex-row gap-3 justify-between items-center">
                 <div class="relative w-full md:w-72">
                     <input type="text" id="task-search-input" value="${Utils.sanitize(searchQuery)}" oninput="app.logic.onTaskSearch(this.value)" placeholder="Görevlerde ara..." class="w-full pl-9 pr-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-sm outline-none focus:ring-2 focus:ring-primary text-gray-800 dark:text-white">
@@ -218,9 +216,7 @@ export const Views = {
                 </div>
             </div>
 
-            <!-- Kanban Columns -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                <!-- Todo Column -->
                 <div class="flex flex-col min-h-[350px]">
                     <div class="flex justify-between items-center mb-3 px-1">
                         <h3 class="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm">
@@ -234,7 +230,6 @@ export const Views = {
                     </div>
                 </div>
 
-                <!-- In Progress Column -->
                 <div class="flex flex-col min-h-[350px]">
                     <div class="flex justify-between items-center mb-3 px-1">
                         <h3 class="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm">
@@ -248,7 +243,6 @@ export const Views = {
                     </div>
                 </div>
 
-                <!-- Done Column -->
                 <div class="flex flex-col min-h-[350px]">
                     <div class="flex justify-between items-center mb-3 px-1">
                         <h3 class="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm">
@@ -272,7 +266,6 @@ export const Views = {
         const habits = store.state.habits || [];
         const todayStr = Utils.toISODateString();
 
-        // Calculate past 7 days dates
         const last7Days = [];
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
@@ -305,7 +298,6 @@ export const Views = {
                         </button>
                     </div>
 
-                    <!-- Streak & Info -->
                     <div class="my-4 flex items-center justify-between">
                         <div class="flex items-center gap-1 text-rose-500 font-extrabold text-lg">
                             <span>🔥</span> ${h.streak || 0} Gün Seri
@@ -315,7 +307,6 @@ export const Views = {
                         </span>
                     </div>
 
-                    <!-- Weekly Checkboxes Grid -->
                     <div class="grid grid-cols-7 gap-1.5 py-2 border-t border-b border-gray-100 dark:border-gray-700/50 my-2">
                         ${last7Days.map(day => {
                             const isDone = completedDates.includes(day.dateStr);
@@ -330,7 +321,6 @@ export const Views = {
                         }).join('')}
                     </div>
 
-                    <!-- Main Daily Check-in Button -->
                     <button onclick="app.logic.toggleHabitDate('${h.id}', '${todayStr}')" class="w-full py-3 mt-2 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isCompletedToday ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}">
                         <span>${isCompletedToday ? '✓ Tamamlandı' : 'Bugün Tamamla'}</span>
                     </button>
@@ -365,12 +355,224 @@ export const Views = {
     },
 
     // ----------------------------------------------------
-    // FOCUS (POMODORO) VIEW
+    // CALENDAR VIEW (NEW)
+    // ----------------------------------------------------
+    Calendar: () => {
+        const tasks = store.state.tasks || [];
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
+
+        // Calculate days in month
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+        const tasksByDate = {};
+        tasks.forEach(t => {
+            if (t.dueDate) {
+                tasksByDate[t.dueDate] = (tasksByDate[t.dueDate] || []);
+                tasksByDate[t.dueDate].push(t);
+            }
+        });
+
+        let calendarCellsHtml = '';
+        // Empty offset cells
+        const offset = (firstDayOfMonth + 6) % 7; // Monday start offset
+        for (let i = 0; i < offset; i++) {
+            calendarCellsHtml += `<div class="h-24 bg-gray-100/40 dark:bg-gray-900/20 rounded-2xl opacity-40"></div>`;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(currentYear, currentMonth, day);
+            const dateStr = Utils.toISODateString(dateObj);
+            const dayTasks = tasksByDate[dateStr] || [];
+            const isToday = dateStr === Utils.toISODateString();
+
+            calendarCellsHtml += `
+                <div class="h-24 p-2 rounded-2xl glass-panel border flex flex-col justify-between hover:border-primary transition-colors relative overflow-hidden ${isToday ? 'ring-2 ring-primary bg-primary/5' : ''}">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black ${isToday ? 'w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center' : 'text-gray-700 dark:text-gray-300'}">${day}</span>
+                        ${dayTasks.length > 0 ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">${dayTasks.length} Görev</span>` : ''}
+                    </div>
+                    <div class="space-y-1 overflow-y-auto max-h-14 pr-1">
+                        ${dayTasks.map(t => `
+                            <div class="text-[10px] truncate px-1.5 py-0.5 rounded-md font-semibold ${t.status === 'done' ? 'bg-emerald-500/10 text-emerald-500 line-through' : 'bg-blue-500/10 text-blue-500'}" title="${Utils.sanitize(t.title)}">
+                                ${Utils.sanitize(t.title)}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Takvim & Planlayıcı</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${monthNames[currentMonth]} ${currentYear} dönemine ait görev dağılımı.</p>
+                </div>
+                <button onclick="app.ui.openQuickAdd()" class="px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/30 hover:scale-105 transition-all">
+                    + Görev Ekle
+                </button>
+            </div>
+
+            <!-- Calendar Days Header -->
+            <div class="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <div>Pzt</div><div>Sal</div><div>Çar</div><div>Per</div><div>Cum</div><div>Cmt</div><div>Paz</div>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="grid grid-cols-7 gap-2">
+                ${calendarCellsHtml}
+            </div>
+        `;
+    },
+
+    // ----------------------------------------------------
+    // REWARD SHOP VIEW (NEW)
+    // ----------------------------------------------------
+    Shop: () => {
+        const rewards = store.state.rewards || [];
+        const currentXP = store.state.xp || 0;
+
+        const renderRewardCard = (r) => {
+            const canAfford = currentXP >= r.xpCost;
+            return `
+                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700/80 relative overflow-hidden">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl">
+                                ${r.icon || '🎁'}
+                            </div>
+                            <button onclick="app.logic.deleteReward('${r.id}')" class="text-gray-400 hover:text-rose-500 p-1">
+                                🗑️
+                            </button>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 dark:text-white text-lg">${Utils.sanitize(r.title)}</h4>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
+                        <span class="text-sm font-extrabold text-amber-500 flex items-center gap-1">
+                            ⚡ ${r.xpCost} XP
+                        </span>
+                        <button onclick="app.logic.buyReward('${r.id}', ${r.xpCost}, '${Utils.sanitize(r.title)}')" 
+                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${canAfford ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95' : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}" ${!canAfford ? 'disabled' : ''}>
+                            ${canAfford ? 'Satın Al / Harca' : 'Yetersiz XP'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+
+        return `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">XP Ödül Marketi 🛍️</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Kazandığınız XP'leri kendi belirlediğiniz kişisel ödüllere harcayın!</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="px-5 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 font-extrabold text-sm flex items-center gap-2">
+                        <span>⚡ Mevcut XP:</span>
+                        <span class="text-lg">${currentXP}</span>
+                    </div>
+                    <button onclick="app.ui.openAddRewardModal()" class="px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/30 hover:scale-105 transition-all">
+                        + Ödül Tanımla
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                ${rewards.map(renderRewardCard).join('')}
+            </div>
+        `;
+    },
+
+    // ----------------------------------------------------
+    // DAILY REFLECTION / JOURNAL VIEW (NEW)
+    // ----------------------------------------------------
+    Journal: () => {
+        const todayStr = Utils.toISODateString();
+        const entries = store.state.journalEntries || {};
+        const todayEntry = entries[todayStr] || { mood: '🚀', note: '' };
+
+        const moods = [
+            { icon: '🚀', label: 'Üretken' },
+            { icon: '😊', label: 'Mutlu' },
+            { icon: '😐', label: 'Dengeli' },
+            { icon: '😓', label: 'Yorgun' },
+            { icon: '🧘', label: 'Huzurlu' }
+        ];
+
+        return `
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Günlük Değerlendirme & Zihin Notları 📖</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Günün nasıl geçtiğini kaydet, zihnini boşalt ve +10 XP kazan.</p>
+                </div>
+
+                <!-- Today's Entry Form -->
+                <div class="glass-panel p-6 rounded-3xl mb-8 border border-gray-100 dark:border-gray-700">
+                    <h4 class="font-bold text-base text-gray-800 dark:text-white mb-3">Bugünün Ruh Hali (${Utils.formatDate(todayStr)})</h4>
+                    
+                    <div class="flex gap-3 mb-5 overflow-x-auto pb-1" id="mood-selector">
+                        ${moods.map(m => `
+                            <button onclick="app.logic.selectMood('${m.icon}')" data-mood="${m.icon}" class="mood-btn flex-1 py-3 px-4 rounded-2xl border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-1 hover:border-primary transition-all ${todayEntry.mood === m.icon ? 'bg-primary/10 border-primary text-primary font-bold' : 'text-gray-600 dark:text-gray-300'}">
+                                <span class="text-2xl">${m.icon}</span>
+                                <span class="text-xs">${m.label}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Günün Notu / Şükran Notu</label>
+                        <textarea id="journal-note-input" rows="4" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-sm" placeholder="Bugün neleri başardın? Seni ne mutlu etti?">${Utils.sanitize(todayEntry.note || '')}</textarea>
+                    </div>
+
+                    <button onclick="app.logic.saveJournal()" class="w-full py-3.5 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.01] transition-transform">
+                        Kaydet (+10 XP)
+                    </button>
+                </div>
+
+                <!-- Past Entries History -->
+                <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Geçmiş Notlar</h4>
+                <div class="space-y-3">
+                    ${Object.values(entries).sort((a, b) => new Date(b.dateStr) - new Date(a.dateStr)).map(e => `
+                        <div class="glass-panel p-4 rounded-2xl flex items-start gap-4">
+                            <span class="text-3xl">${e.mood || '📝'}</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-sm text-gray-900 dark:text-white">${Utils.formatDate(e.dateStr)}</span>
+                                    <span class="text-xs text-gray-400">${e.dateStr}</span>
+                                </div>
+                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">${Utils.sanitize(e.note || 'Not eklenmedi.')}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    },
+
+    // ----------------------------------------------------
+    // FOCUS (POMODORO) VIEW (UPGRADED WITH AMBIENT SOUND)
     // ----------------------------------------------------
     Focus: () => {
+        const tasks = (store.state.tasks || []).filter(t => t.status !== 'done');
+
         return `
             <div class="flex flex-col items-center justify-center min-h-[500px]">
                 <div class="glass-panel p-8 md:p-12 rounded-3xl flex flex-col items-center max-w-md w-full shadow-2xl relative">
+                    <!-- Task Link Selector -->
+                    <div class="w-full mb-6">
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 text-center">Odaklanılan Görev</label>
+                        <select id="focus-task-select" class="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
+                            <option value="">-- Genel Odaklanma --</option>
+                            ${tasks.map(t => `<option value="${t.id}">📌 ${Utils.sanitize(t.title)}</option>`).join('')}
+                        </select>
+                    </div>
+
                     <!-- SVG Timer Circle -->
                     <div class="relative w-64 h-64 mb-8">
                         <svg class="w-full h-full transform -rotate-90">
@@ -381,6 +583,16 @@ export const Views = {
                             <span id="timer-display" class="text-5xl font-black text-gray-900 dark:text-white font-mono tracking-tight">25:00</span>
                             <span id="timer-status" class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">ODAK SEANSI</span>
                         </div>
+                    </div>
+
+                    <!-- Ambient Sound Selector -->
+                    <div class="w-full mb-6 flex items-center justify-center gap-2">
+                        <span class="text-xs font-bold text-gray-400">🎵 Ortam Sesi:</span>
+                        <select onchange="app.logic.setAmbientSound(this.value)" class="p-2 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
+                            <option value="none">Sessiz 🔇</option>
+                            <option value="rain">Yağmur Sesi 🌧️</option>
+                            <option value="focus">432Hz Derin Odak 🧘</option>
+                        </select>
                     </div>
 
                     <!-- Controls -->
@@ -408,7 +620,6 @@ export const Views = {
     // RENDER CHARTS & HEATMAP
     // ----------------------------------------------------
     renderCharts: () => {
-        // Pie Chart
         const tasks = store.state.tasks || [];
         const categories = {};
         tasks.forEach(t => categories[t.category] = (categories[t.category] || 0) + 1);
@@ -453,7 +664,6 @@ export const Views = {
             }
         }
 
-        // Real Activity Heatmap Calculation
         const heatmap = document.getElementById('heatmap-container');
         if (heatmap) {
             const logs = store.state.activityLog || [];
@@ -462,7 +672,6 @@ export const Views = {
                 logCounts[l.dateStr] = (logCounts[l.dateStr] || 0) + 1;
             });
 
-            // Generate 12 weeks grid
             let heatmapHtml = '<div class="flex gap-1.5 justify-center">';
             const today = new Date();
 

@@ -7,7 +7,7 @@
     <title>Zenith | Yaşam ve Görev Yönetim Sistemi</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Zenith - Görev yönetimi, alışkanlık takibi, Pomodoro odaklanma seansları ve oyunlaştırma özellikleri sunan modern web uygulaması.">
+    <meta name="description" content="Zenith - Görev yönetimi, alışkanlık takibi, Pomodoro odaklanma seansları, XP Ödül Marketi ve Takvim planlayıcısı.">
     <meta name="theme-color" content="#10b981">
 
     <!-- Content Security Policy (CSP) -->
@@ -72,10 +72,10 @@
             </div>
 
             <!-- Nav Links -->
-            <div class="flex-1 py-4 flex flex-col gap-2 px-3">
+            <div class="flex-1 py-4 flex flex-col gap-1.5 px-3 overflow-y-auto">
                 <button onclick="app.router.navigate('dashboard')" data-nav-route="dashboard"
-                    class="nav-btn flex items-center gap-3.5 p-3.5 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
-                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
                         </path>
@@ -84,8 +84,8 @@
                 </button>
 
                 <button onclick="app.router.navigate('tasks')" data-nav-route="tasks"
-                    class="nav-btn flex items-center gap-3.5 p-3.5 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
-                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
                         </path>
@@ -94,17 +94,44 @@
                 </button>
 
                 <button onclick="app.router.navigate('habits')" data-nav-route="habits"
-                    class="nav-btn flex items-center gap-3.5 p-3.5 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
-                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                     <span class="hidden lg:block">Alışkanlıklar</span>
                 </button>
 
+                <button onclick="app.router.navigate('calendar')" data-nav-route="calendar"
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="hidden lg:block">Takvim</span>
+                </button>
+
+                <button onclick="app.router.navigate('shop')" data-nav-route="shop"
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <span class="hidden lg:block">Ödül Marketi</span>
+                </button>
+
+                <button onclick="app.router.navigate('journal')" data-nav-route="journal"
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span class="hidden lg:block">Günlük & Notlar</span>
+                </button>
+
                 <button onclick="app.router.navigate('focus')" data-nav-route="focus"
-                    class="nav-btn flex items-center gap-3.5 p-3.5 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
-                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="nav-btn flex items-center gap-3.5 p-3 rounded-2xl hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -173,10 +200,10 @@
             </div>
 
             <!-- Mobile Bottom Navigation -->
-            <div class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t flex justify-around items-center p-2.5 z-30 shadow-2xl">
+            <div class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t flex justify-around items-center p-2 z-30 shadow-2xl">
                 <button onclick="app.router.navigate('dashboard')" data-nav-route="dashboard"
-                    class="flex flex-col items-center text-xs gap-1 text-primary font-bold">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-primary font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
                         </path>
@@ -185,8 +212,8 @@
                 </button>
 
                 <button onclick="app.router.navigate('tasks')" data-nav-route="tasks"
-                    class="flex flex-col items-center text-xs gap-1 text-gray-500 dark:text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
                         </path>
@@ -194,25 +221,42 @@
                     <span>Görevler</span>
                 </button>
 
-                <!-- Quick Add Center Action Button -->
-                <button onclick="app.ui.openQuickAdd()" class="flex flex-col items-center justify-center -mt-8 focus:outline-none">
-                    <div class="w-14 h-14 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-white text-2xl font-black transform active:scale-90 transition-transform">
+                <button onclick="app.router.navigate('calendar')" data-nav-route="calendar"
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Takvim</span>
+                </button>
+
+                <button onclick="app.ui.openQuickAdd()" class="flex flex-col items-center justify-center -mt-6 focus:outline-none">
+                    <div class="w-12 h-12 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-white text-xl font-black transform active:scale-90 transition-transform">
                         +
                     </div>
                 </button>
 
-                <button onclick="app.router.navigate('habits')" data-nav-route="habits"
-                    class="flex flex-col items-center text-xs gap-1 text-gray-500 dark:text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button onclick="app.router.navigate('shop')" data-nav-route="shop"
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
-                    <span>Alışkanlık</span>
+                    <span>Market</span>
+                </button>
+
+                <button onclick="app.router.navigate('journal')" data-nav-route="journal"
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span>Günlük</span>
                 </button>
 
                 <button onclick="app.router.navigate('focus')" data-nav-route="focus"
-                    class="flex flex-col items-center text-xs gap-1 text-gray-500 dark:text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>

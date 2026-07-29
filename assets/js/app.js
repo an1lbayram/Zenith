@@ -4,10 +4,11 @@ import { Router } from './router.js';
 import { Views } from './views.js';
 import { Utils } from './utils.js';
 
-// App Global Search / Filter State
+// App Global State
 window.appState = {
     taskSearch: '',
-    taskCategory: 'all'
+    taskCategory: 'all',
+    selectedMood: '🚀'
 };
 
 const app = {
@@ -67,7 +68,6 @@ const app = {
 
         toggleSubtask: (taskId, subtaskId) => {
             store.toggleSubtask(taskId, subtaskId);
-            // If in edit modal, re-open or update
             UI.openEditTaskModal(taskId);
         },
 
@@ -95,6 +95,48 @@ const app = {
 
         toggleHabitDate: (id, dateStr) => {
             store.toggleHabitDate(id, dateStr);
+            Router.render();
+        },
+
+        // Reward Shop Handlers
+        buyReward: (id, xpCost, rewardTitle) => {
+            const success = store.spendXP(xpCost, rewardTitle);
+            if (success) {
+                app.gamification.fireConfetti();
+                UI.showToast(`Tebrikler! "${rewardTitle}" ödülünü aldınız! 🎁`, 'success');
+                Router.render();
+            } else {
+                UI.showToast('Yetersiz XP!', 'error');
+            }
+        },
+
+        deleteReward: (id) => {
+            store.deleteReward(id);
+            UI.showToast('Ödül silindi', 'info');
+            Router.render();
+        },
+
+        // Daily Journal Handlers
+        selectMood: (moodIcon) => {
+            window.appState.selectedMood = moodIcon;
+            document.querySelectorAll('.mood-btn').forEach(btn => {
+                if (btn.dataset.mood === moodIcon) {
+                    btn.classList.add('bg-primary/10', 'border-primary', 'text-primary', 'font-bold');
+                } else {
+                    btn.classList.remove('bg-primary/10', 'border-primary', 'text-primary', 'font-bold');
+                }
+            });
+        },
+
+        saveJournal: () => {
+            const noteEl = document.getElementById('journal-note-input');
+            const note = noteEl ? noteEl.value : '';
+            const mood = window.appState.selectedMood || '🚀';
+            const todayStr = Utils.toISODateString();
+
+            store.saveJournalEntry(todayStr, mood, note);
+            app.gamification.fireConfetti();
+            UI.showToast('Günün notu kaydedildi! +10 XP 🎯', 'success');
             Router.render();
         },
 
@@ -162,15 +204,23 @@ const app = {
             }
         },
 
-        // Pomodoro State
+        // Pomodoro State & Ambient Sound
         timerInterval: null,
         timeLeft: 25 * 60,
         totalDuration: 25 * 60,
         isRunning: false,
         modeName: 'Pomodoro',
+        ambientSound: 'none',
 
         initPomodoro: () => {
             app.logic.updateTimerDisplay();
+        },
+
+        setAmbientSound: (soundType) => {
+            app.logic.ambientSound = soundType;
+            if (app.logic.isRunning) {
+                Utils.playAmbientSound(soundType);
+            }
         },
 
         toggleTimer: () => {
@@ -191,6 +241,10 @@ const app = {
                 startBtn.classList.replace('bg-primary', 'bg-amber-500');
             }
 
+            if (app.logic.ambientSound && app.logic.ambientSound !== 'none') {
+                Utils.playAmbientSound(app.logic.ambientSound);
+            }
+
             app.logic.timerInterval = setInterval(() => {
                 app.logic.timeLeft--;
                 app.logic.updateTimerDisplay();
@@ -199,6 +253,7 @@ const app = {
                     clearInterval(app.logic.timerInterval);
                     app.logic.timerInterval = null;
                     app.logic.isRunning = false;
+                    Utils.stopAmbientSound();
 
                     if (startBtn) {
                         startBtn.textContent = 'BAŞLAT';
@@ -206,6 +261,8 @@ const app = {
                     }
 
                     if (store.state.settings.soundEnabled) Utils.playChime('timerEnd');
+                    Utils.sendNotification(`${app.logic.modeName} Tamamlandı! 🎉`, 'Tebrikler! Odaklanma seansınızı başarıyla bitirdiniz.');
+
                     UI.showToast(`${app.logic.modeName} Süresi Doldu! 🎉 (+25 XP)`, 'levelUp');
                     app.gamification.fireConfetti();
                     store.addXP(25);
@@ -218,6 +275,7 @@ const app = {
             clearInterval(app.logic.timerInterval);
             app.logic.timerInterval = null;
             app.logic.isRunning = false;
+            Utils.stopAmbientSound();
 
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
@@ -231,6 +289,7 @@ const app = {
             app.logic.timerInterval = null;
             app.logic.isRunning = false;
             app.logic.timeLeft = app.logic.totalDuration;
+            Utils.stopAmbientSound();
 
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
@@ -262,7 +321,7 @@ const app = {
             if (display) display.textContent = formatted;
 
             if (circle) {
-                const circumference = 722; // 2 * PI * 115
+                const circumference = 722;
                 const offset = circumference - (circumference * app.logic.timeLeft) / app.logic.totalDuration;
                 circle.style.strokeDashoffset = offset;
             }
@@ -300,7 +359,7 @@ const app = {
                         active = true;
                         p.x += p.vx;
                         p.y += p.vy;
-                        p.vy += 0.25; // gravity
+                        p.vy += 0.25;
                         p.life--;
                         ctx.fillStyle = p.color;
                         ctx.beginPath();
@@ -335,7 +394,6 @@ window.addEventListener('achievementUnlocked', (e) => {
 
 // Store State Listener
 store.subscribe((state) => {
-    // Header Stats
     const nameEl = document.getElementById('user-name');
     const avatarEl = document.getElementById('user-avatar');
     const xpEl = document.getElementById('user-xp');
@@ -346,8 +404,7 @@ store.subscribe((state) => {
     if (xpEl) xpEl.textContent = `${state.xp} XP`;
     if (badgeEl) badgeEl.textContent = `Lvl ${state.level}`;
 
-    // Auto-update task or dashboard counts if open
-    if (Router.currentRoute === 'tasks' || Router.currentRoute === 'dashboard') {
+    if (Router.currentRoute === 'tasks' || Router.currentRoute === 'dashboard' || Router.currentRoute === 'shop') {
         Router.render();
     }
 });

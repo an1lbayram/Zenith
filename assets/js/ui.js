@@ -94,16 +94,13 @@ export const UI = {
                 }, 200);
             };
 
-            // Close button listener
             const closeBtns = content.querySelectorAll('.modal-close');
             closeBtns.forEach(btn => btn.onclick = () => close(null));
 
-            // Backdrop click close
             backdrop.onclick = (e) => {
                 if (e.target === backdrop) close(null);
             };
 
-            // Form submit interceptor
             const form = content.querySelector('form');
             if (form) {
                 form.onsubmit = (e) => {
@@ -256,6 +253,56 @@ export const UI = {
         }
     },
 
+    // Add Reward Modal (New)
+    openAddRewardModal: async () => {
+        const result = await UI.showModal(`
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold text-lg">🎁</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Yeni Ödül Tanımla</h3>
+                    </div>
+                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Ödül Başlığı</label>
+                        <input type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white" placeholder="Örn: 1 Saat Oyun Oyna, Dondurma Ye">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">XP Maliyeti</label>
+                            <input type="number" name="xpCost" value="50" min="10" step="10" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">İkon / Emoji</label>
+                            <select name="icon" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-lg">
+                                <option value="🎮">🎮 Oyun</option>
+                                <option value="☕">☕ Kahve</option>
+                                <option value="🎬">🎬 Dizi / Film</option>
+                                <option value="🏖️">🏖️ Tatil / Mola</option>
+                                <option value="🍕">🍕 Yemek / Tatlı</option>
+                                <option value="🛍️">🛍️ Alışveriş</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl shadow-lg shadow-amber-500/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-2">
+                        Ödülü Markete Ekle
+                    </button>
+                </form>
+            </div>
+        `);
+
+        if (result && result.title) {
+            store.addReward(result);
+            UI.showToast('Yeni ödül markete eklendi! 🎁', 'success');
+        }
+    },
+
     // Edit Task Modal
     openEditTaskModal: async (taskId) => {
         const task = store.state.tasks.find(t => t.id === taskId);
@@ -363,7 +410,6 @@ export const UI = {
                     </button>
                 </div>
 
-                <!-- User Card -->
                 <div class="glass-panel p-4 rounded-2xl flex items-center gap-4 mb-6">
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-primary/30">
                         ${user.avatar}
@@ -376,7 +422,6 @@ export const UI = {
                     </div>
                 </div>
 
-                <!-- XP Bar -->
                 <div class="mb-6">
                     <div class="flex justify-between text-xs font-bold text-gray-500 mb-1">
                         <span>Seviye İlerlemesi</span>
@@ -387,7 +432,6 @@ export const UI = {
                     </div>
                 </div>
 
-                <!-- Achievements Header -->
                 <div class="mb-3 flex justify-between items-center">
                     <h4 class="font-bold text-sm text-gray-800 dark:text-white uppercase tracking-wider">Rozetler (${unlockedCount}/${achievements.length})</h4>
                 </div>
@@ -396,7 +440,6 @@ export const UI = {
                     ${achievementListHtml}
                 </div>
 
-                <!-- Backup and Data Options -->
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4 flex flex-wrap gap-2">
                     <button type="button" onclick="app.logic.exportData()" class="px-3 py-2 text-xs font-bold rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200">💾 Verileri Dışa Aktar</button>
                     <button type="button" onclick="app.logic.importDataPrompt()" class="px-3 py-2 text-xs font-bold rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200">📥 İçeri Aktar</button>

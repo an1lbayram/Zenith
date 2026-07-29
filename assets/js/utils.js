@@ -1,5 +1,5 @@
 /**
- * Utility functions for Zenith OS
+ * Utility functions for Zenith
  */
 export const Utils = {
     // XSS Protection Input Sanitization
@@ -64,7 +64,7 @@ export const Utils = {
         };
     },
 
-    // Web Audio Synthesized Chime sound (No external file needed)
+    // Web Audio Synthesized Chime sound
     playChime: (type = 'success') => {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -99,9 +99,104 @@ export const Utils = {
                 playNote(587.33, 0.25, 0);   // D5
                 playNote(880, 0.25, 250);    // A5
                 playNote(1174.66, 0.5, 500); // D6
+            } else if (type === 'purchase') {
+                playNote(659.25, 0.15, 0);
+                playNote(880, 0.3, 100);
             }
         } catch (e) {
             console.warn('Audio play error:', e);
+        }
+    },
+
+    // Procedural Ambient Sound Generator (Rain, White Noise, 432Hz Focus)
+    ambientAudioCtx: null,
+    ambientNodes: [],
+
+    stopAmbientSound: () => {
+        if (Utils.ambientNodes && Utils.ambientNodes.length) {
+            Utils.ambientNodes.forEach(node => {
+                try { node.stop(); } catch (e) {}
+                try { node.disconnect(); } catch (e) {}
+            });
+            Utils.ambientNodes = [];
+        }
+        if (Utils.ambientAudioCtx) {
+            try { Utils.ambientAudioCtx.close(); } catch (e) {}
+            Utils.ambientAudioCtx = null;
+        }
+    },
+
+    playAmbientSound: (type) => {
+        Utils.stopAmbientSound();
+        if (!type || type === 'none') return;
+
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            Utils.ambientAudioCtx = ctx;
+
+            if (type === 'rain') {
+                // Pink noise rain simulation
+                const bufferSize = 2 * ctx.sampleRate;
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    b3 = 0.86650 * b3 + white * 0.3104856;
+                    b4 = 0.55000 * b4 + white * 0.5329522;
+                    b5 = -0.7616 * b5 - white * 0.0168980;
+                    output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                    output[i] *= 0.04; // volume
+                    b6 = white * 0.115926;
+                }
+
+                const whiteNoise = ctx.createBufferSource();
+                whiteNoise.buffer = noiseBuffer;
+                whiteNoise.loop = true;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1000, ctx.currentTime);
+
+                whiteNoise.connect(filter);
+                filter.connect(ctx.destination);
+                whiteNoise.start();
+                Utils.ambientNodes.push(whiteNoise);
+
+            } else if (type === 'focus') {
+                // 432Hz Deep Focus Sine Wave Oscillator
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(432, ctx.currentTime); // 432Hz frequency
+                gain.gain.setValueAtTime(0.05, ctx.currentTime); // low volume
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                Utils.ambientNodes.push(osc);
+            }
+        } catch (e) {
+            console.warn('Ambient sound error:', e);
+        }
+    },
+
+    // Desktop Notification Helper
+    sendNotification: (title, body) => {
+        if (!('Notification' in window)) return;
+        if (Notification.permission === 'granted') {
+            new Notification(title, { body, icon: 'assets/icons/icon-192.png' });
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body, icon: 'assets/icons/icon-192.png' });
+                }
+            });
         }
     }
 };
