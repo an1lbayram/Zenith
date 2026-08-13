@@ -1,14 +1,19 @@
 :root {
     --color-primary: #10b981; /* Emerald Default */
     --color-secondary: #34d399;
+    /* RGB-triplet twins so Tailwind's color-opacity modifiers (bg-primary/10,
+       shadow-primary/30, etc.) can compute an alpha channel — Tailwind can't
+       do that from a plain hex/var() color value. */
+    --color-primary-rgb: 16 185 129;
+    --color-secondary-rgb: 52 211 153;
 }
 
 /* Theme Options */
-.theme-emerald { --color-primary: #10b981; --color-secondary: #34d399; }
-.theme-blue    { --color-primary: #3b82f6; --color-secondary: #60a5fa; }
-.theme-purple  { --color-primary: #8b5cf6; --color-secondary: #a78bfa; }
-.theme-red     { --color-primary: #ef4444; --color-secondary: #f87171; }
-.theme-amber   { --color-primary: #f59e0b; --color-secondary: #fbbf24; }
+.theme-emerald { --color-primary: #10b981; --color-secondary: #34d399; --color-primary-rgb: 16 185 129;  --color-secondary-rgb: 52 211 153; }
+.theme-blue    { --color-primary: #3b82f6; --color-secondary: #60a5fa; --color-primary-rgb: 59 130 246;  --color-secondary-rgb: 96 165 250; }
+.theme-purple  { --color-primary: #8b5cf6; --color-secondary: #a78bfa; --color-primary-rgb: 139 92 246;  --color-secondary-rgb: 167 139 250; }
+.theme-red     { --color-primary: #ef4444; --color-secondary: #f87171; --color-primary-rgb: 239 68 68;   --color-secondary-rgb: 248 113 113; }
+.theme-amber   { --color-primary: #f59e0b; --color-secondary: #fbbf24; --color-primary-rgb: 245 158 11;  --color-secondary-rgb: 251 191 36; }
 
 body {
     font-family: 'Outfit', sans-serif;

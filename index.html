@@ -12,29 +12,13 @@
 
     <!-- Content Security Policy (CSP) -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com https://fonts.gstatic.com https://va.vercel-scripts.com https://vitals.vercel-insights.com data: blob:; connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com;">
+        content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://va.vercel-scripts.com https://vitals.vercel-insights.com data: blob:; connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com;">
 
     <!-- Vercel Web Analytics -->
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: 'var(--color-primary)',
-                        secondary: 'var(--color-secondary)',
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,6 +29,9 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="assets/icons/favicon.png">
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+    <!-- Tailwind CSS (built at deploy time via `npm run build`, see tailwind.config.js) -->
+    <link rel="stylesheet" href="assets/css/tailwind.css">
 
     <!-- Custom Styling -->
     <link rel="stylesheet" href="assets/css/style.css">

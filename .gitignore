@@ -6,6 +6,7 @@ node_modules/
 # Vercel & Build Output
 .vercel/
 dist/
+assets/css/tailwind.css
 
 # IDE & Config
 .vscode/
