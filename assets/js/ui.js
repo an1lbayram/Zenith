@@ -115,6 +115,32 @@ export const UI = {
         });
     },
 
+    // iOS "Add to Home Screen" Instructions (no native install prompt on Safari)
+    openIOSInstallGuide: () => {
+        UI.showModal(`
+            <div class="p-6 text-center">
+                <div class="text-4xl mb-3">📲</div>
+                <h3 class="text-lg font-extrabold text-gray-900 dark:text-white mb-2">Zenith'i Ana Ekrana Ekle</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-5">Safari'de uygulamayı yüklemek için:</p>
+                <div class="text-left space-y-3 text-sm text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-900/40 rounded-2xl p-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 flex-shrink-0 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs">1</span>
+                        <span>Alt menüden <strong>Paylaş</strong> ikonuna dokun (kare içinden yukarı ok)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 flex-shrink-0 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs">2</span>
+                        <span><strong>Ana Ekrana Ekle</strong> seçeneğine dokun</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 flex-shrink-0 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs">3</span>
+                        <span><strong>Ekle</strong> ile onayla</span>
+                    </div>
+                </div>
+                <button class="modal-close mt-5 w-full py-3 rounded-2xl bg-primary text-white font-bold hover:brightness-110 transition-all">Anladım</button>
+            </div>
+        `);
+    },
+
     // Quick Add Task Modal
     openQuickAdd: async () => {
         const todayIso = Utils.toISODateString();

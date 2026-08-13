@@ -4,6 +4,11 @@ import { Router } from './router.js';
 import { Views } from './views.js';
 import { Utils } from './utils.js';
 
+// PWA Install Prompt State
+let deferredInstallPrompt = null;
+const isIOSDevice = () => /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+const isStandaloneMode = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
 // App Global State
 window.appState = {
     taskSearch: '',
@@ -391,6 +396,21 @@ const app = {
             };
             animate();
         }
+    },
+
+    pwa: {
+        install: async () => {
+            const btn = document.getElementById('install-app-btn');
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                if (btn) btn.classList.add('hidden');
+                if (outcome !== 'accepted') UI.showToast('Yükleme iptal edildi', 'info');
+            } else if (isIOSDevice()) {
+                UI.openIOSInstallGuide();
+            }
+        }
     }
 };
 
@@ -443,6 +463,29 @@ window.addEventListener('online', () => {
 window.addEventListener('offline', () => {
     const el = document.getElementById('offline-indicator');
     if (el) el.classList.remove('hidden');
+});
+
+// PWA Install Button
+const installBtn = document.getElementById('install-app-btn');
+if (installBtn && !isStandaloneMode()) {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        installBtn.classList.remove('hidden');
+        installBtn.classList.add('flex');
+    });
+
+    // beforeinstallprompt never fires on iOS Safari; show manual guide instead
+    if (isIOSDevice()) {
+        installBtn.classList.remove('hidden');
+        installBtn.classList.add('flex');
+    }
+}
+
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    if (installBtn) installBtn.classList.add('hidden');
+    UI.showToast('Zenith başarıyla yüklendi! 🎉', 'success');
 });
 
 // Service Worker Registration
