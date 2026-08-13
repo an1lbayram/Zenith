@@ -488,12 +488,30 @@ window.addEventListener('appinstalled', () => {
     UI.showToast('Zenith başarıyla yüklendi! 🎉', 'success');
 });
 
-// Service Worker Registration
+// Service Worker Registration & Auto-Update
 if ('serviceWorker' in navigator) {
+    // The new SW activates immediately (skipWaiting + clients.claim in sw.js),
+    // which fires 'controllerchange' here — reload once so the already-open
+    // installed app picks up the fresh assets without a manual refresh.
+    let swRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (swRefreshing) return;
+        swRefreshing = true;
+        window.location.reload();
+    });
+
     window.addEventListener('load', async () => {
         try {
             const reg = await navigator.serviceWorker.register('./sw.js');
             console.info('ServiceWorker registered cleanly:', reg.scope);
+
+            // Proactively look for a newer version whenever connectivity
+            // returns or the installed app regains focus.
+            window.addEventListener('online', () => reg.update());
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') reg.update();
+            });
+            setInterval(() => reg.update(), 30 * 60 * 1000);
         } catch (err) {
             console.warn('ServiceWorker registration error:', err);
         }
