@@ -17,6 +17,25 @@ const app = {
     logic: {
         draggedId: null,
 
+        // Profile Handlers
+        updateProfileName: (value) => {
+            const trimmed = (value || '').trim().slice(0, 24);
+            const finalName = trimmed || 'Kullanıcı';
+            store.updateProfile({ name: finalName });
+            const input = document.getElementById('profile-name-input');
+            if (input) input.value = finalName;
+            UI.showToast('İsim güncellendi!', 'success');
+        },
+
+        setProfileAvatar: (emoji) => {
+            store.updateProfile({ avatar: emoji });
+            const preview = document.getElementById('profile-avatar-emoji');
+            if (preview) preview.textContent = emoji;
+            const picker = document.getElementById('avatar-picker');
+            if (picker) picker.classList.add('hidden');
+            UI.showToast('Avatar güncellendi!', 'success');
+        },
+
         // Task Filters & Search
         onTaskSearch: (val) => {
             window.appState.taskSearch = val;

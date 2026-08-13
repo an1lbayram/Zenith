@@ -135,8 +135,6 @@ Zenith/
 │   │   └── icon-512.png
 │   └── js/
 │       ├── app.js          # Ana uygulama başlatıcı & event handlers
-│       ├── config.js       # Firebase & uygulama ayarları
-│       ├── firebase.js     # Firebase entegrasyon taslağı
 │       ├── router.js       # SPA İstemci tarafı yönlendirici (Router)
 │       ├── store.js        # Reaktif Durum Yönetimi (State Store)
 │       ├── ui.js           # Toast, Modal & Bildirim bileşenleri

@@ -36,34 +36,10 @@ const DEFAULT_DEMO_TASKS = [
         title: 'Haftalık Proje Planlaması',
         category: 'work',
         priority: 'normal',
-        status: 'done',
+        status: 'todo',
         dueDate: Utils.toISODateString(),
         notes: 'Öncelikli işleri listele ve takvime ekle.',
         subtasks: [],
-        createdAt: new Date(Date.now() - 86400000).toISOString(),
-        completedAt: new Date().toISOString()
-    }
-];
-
-const DEFAULT_DEMO_HABITS = [
-    {
-        id: 'habit_1',
-        title: 'Kitap Oku (20 Sayfa)',
-        category: 'study',
-        frequency: 'daily',
-        icon: '📚',
-        streak: 2,
-        completedDates: [Utils.toISODateString(new Date(Date.now() - 86400000)), Utils.toISODateString()],
-        createdAt: new Date().toISOString()
-    },
-    {
-        id: 'habit_2',
-        title: '2 Litre Su İç',
-        category: 'health',
-        frequency: 'daily',
-        icon: '💧',
-        streak: 1,
-        completedDates: [Utils.toISODateString()],
         createdAt: new Date().toISOString()
     }
 ];
@@ -76,26 +52,18 @@ class Store {
                 avatar: '⚡'
             },
             tasks: [...DEFAULT_DEMO_TASKS],
-            habits: [...DEFAULT_DEMO_HABITS],
+            habits: [],
             rewards: [...DEFAULT_REWARDS],
-            journalEntries: {
-                [Utils.toISODateString()]: {
-                    dateStr: Utils.toISODateString(),
-                    mood: '🚀',
-                    note: 'Bugün Zenith ile harika bir başlangıç yaptım!'
-                }
-            },
-            activityLog: [
-                { id: 'act_1', type: 'task_complete', dateStr: Utils.toISODateString(), timestamp: Date.now() }
-            ],
+            journalEntries: {},
+            activityLog: [],
             achievements: [...INITIAL_ACHIEVEMENTS],
             settings: {
                 theme: 'emerald',
                 darkMode: false,
                 soundEnabled: true
             },
-            xp: 120,
-            level: 2
+            xp: 0,
+            level: 1
         };
 
         this.listeners = [];
@@ -113,7 +81,7 @@ class Store {
                     user: { ...this.state.user, ...(parsed.user || {}) },
                     settings: { ...this.state.settings, ...(parsed.settings || {}) },
                     tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [...DEFAULT_DEMO_TASKS],
-                    habits: Array.isArray(parsed.habits) ? parsed.habits : [...DEFAULT_DEMO_HABITS],
+                    habits: Array.isArray(parsed.habits) ? parsed.habits : [],
                     rewards: Array.isArray(parsed.rewards) ? parsed.rewards : [...DEFAULT_REWARDS],
                     journalEntries: (parsed.journalEntries && typeof parsed.journalEntries === 'object') ? parsed.journalEntries : {},
                     activityLog: Array.isArray(parsed.activityLog) ? parsed.activityLog : [],

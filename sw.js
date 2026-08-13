@@ -1,12 +1,10 @@
-const CACHE_NAME = 'zenith-v2';
+const CACHE_NAME = 'zenith-v3';
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './assets/css/style.css',
   './assets/js/app.js',
-  './assets/js/config.js',
-  './assets/js/firebase.js',
   './assets/js/router.js',
   './assets/js/store.js',
   './assets/js/ui.js',
@@ -20,9 +18,13 @@ const CORE_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(CORE_ASSETS).catch((err) => {
-        console.warn('Caching core assets warning:', err);
-      });
+      // Cache each asset independently so one bad/missing URL can't wipe out
+      // the entire precache (cache.addAll is all-or-nothing).
+      return Promise.allSettled(
+        CORE_ASSETS.map((url) =>
+          cache.add(url).catch((err) => console.warn('Precache miss:', url, err))
+        )
+      );
     })
   );
   self.skipWaiting();
@@ -61,6 +63,27 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Navigation requests: cache-first, network fallback, and finally fall back
+  // to the cached app shell so a flaky/offline network never surfaces as a
+  // hard "site can't be reached" error in the installed PWA.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const copy = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            }
+            return networkResponse;
+          })
+          .catch(() => caches.match('./index.html'));
+      })
     );
     return;
   }

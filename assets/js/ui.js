@@ -1,6 +1,8 @@
 import { Utils } from './utils.js';
 import { store } from './store.js';
 
+const AVATAR_OPTIONS = ['⚡', '🚀', '🔥', '🌟', '🎯', '🧠', '🦁', '🐺', '🦉', '🐲', '🌵', '🍀'];
+
 export const UI = {
     // Theme Management
     setTheme: (themeName) => {
@@ -401,7 +403,9 @@ export const UI = {
             </div>
         `).join('');
 
-        await UI.showModal(`
+        const avatarOptionsHtml = AVATAR_OPTIONS.map(emoji => `<button type="button" data-avatar-option="${emoji}" class="avatar-option-btn text-xl w-9 h-9 flex items-center justify-center rounded-xl hover:bg-primary/10 transition-colors">${emoji}</button>`).join('');
+
+        const modalPromise = UI.showModal(`
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profil ve Başarımlar</h3>
@@ -410,15 +414,22 @@ export const UI = {
                     </button>
                 </div>
 
-                <div class="glass-panel p-4 rounded-2xl flex items-center gap-4 mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-primary/30">
-                        ${user.avatar}
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <input type="text" id="profile-name-input" value="${Utils.sanitize(user.name)}" onchange="store.updateProfile({name: this.value})" class="font-bold text-lg text-gray-900 dark:text-white bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-primary outline-none">
+                <div class="glass-panel p-4 rounded-2xl mb-6">
+                    <div class="flex items-center gap-4">
+                        <button type="button" onclick="app.ui.toggleAvatarPicker()" title="Avatarı değiştir"
+                            class="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-primary/30 hover:scale-105 transition-transform flex-shrink-0">
+                            <span id="profile-avatar-emoji">${user.avatar}</span>
+                            <span class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow">✏️</span>
+                        </button>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="profile-name-input" maxlength="24" value="${Utils.sanitize(user.name)}" onchange="app.logic.updateProfileName(this.value)" class="font-bold text-lg text-gray-900 dark:text-white bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-primary outline-none w-full">
+                            </div>
+                            <p class="text-xs text-primary font-bold mt-1">Seviye ${store.state.level} (${store.state.xp} total XP)</p>
                         </div>
-                        <p class="text-xs text-primary font-bold mt-1">Seviye ${store.state.level} (${store.state.xp} total XP)</p>
+                    </div>
+                    <div id="avatar-picker" class="hidden grid grid-cols-8 gap-1.5 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        ${avatarOptionsHtml}
                     </div>
                 </div>
 
@@ -447,5 +458,21 @@ export const UI = {
                 </div>
             </div>
         `);
+
+        const avatarPicker = document.getElementById('avatar-picker');
+        if (avatarPicker) {
+            avatarPicker.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-avatar-option]');
+                if (!btn) return;
+                window.app.logic.setProfileAvatar(btn.dataset.avatarOption);
+            });
+        }
+
+        await modalPromise;
+    },
+
+    toggleAvatarPicker: () => {
+        const picker = document.getElementById('avatar-picker');
+        if (picker) picker.classList.toggle('hidden');
     }
 };
