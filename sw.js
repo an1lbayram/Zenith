@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zenith-v3';
+const CACHE_NAME = 'zenith-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -67,23 +67,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Navigation requests: cache-first, network fallback, and finally fall back
-  // to the cached app shell so a flaky/offline network never surfaces as a
-  // hard "site can't be reached" error in the installed PWA.
+  // Navigation requests: network-first so new deploys show up immediately,
+  // falling back to the cached app shell only when offline.
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              const copy = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-            }
-            return networkResponse;
-          })
-          .catch(() => caches.match('./index.html'));
-      })
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
     );
     return;
   }
