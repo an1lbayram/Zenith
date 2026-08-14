@@ -37,10 +37,10 @@ export const Views = {
                         <button onclick="app.ui.openQuickAdd()" class="px-4 py-2.5 rounded-2xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/30 hover:scale-105 transition-transform flex items-center gap-1.5">
                             <span>+</span> Görev Ekle
                         </button>
-                        <button onclick="app.ui.openAddHabitModal()" class="px-4 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 hover:scale-105 transition-transform flex items-center gap-1.5">
+                        <button onclick="app.ui.openAddHabitModal()" class="px-4 py-2.5 rounded-2xl bg-emerald-700 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 hover:scale-105 transition-transform flex items-center gap-1.5">
                             <span>🌱</span> Alışkanlık Ekle
                         </button>
-                        <button onclick="app.router.navigate('shop')" class="px-4 py-2.5 rounded-2xl bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-500/30 hover:scale-105 transition-transform flex items-center gap-1.5">
+                        <button onclick="app.router.navigate('shop')" class="px-4 py-2.5 rounded-2xl bg-amber-700 text-white font-bold text-xs shadow-lg shadow-amber-500/30 hover:scale-105 transition-transform flex items-center gap-1.5">
                             <span>🛍️</span> Ödül Marketi
                         </button>
                     </div>
@@ -150,9 +150,9 @@ export const Views = {
                         <div class="flex-1">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span class="text-xs font-bold px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                                    ${catEmojis[t.category] || '📌'} ${t.category}
+                                    ${catEmojis[t.category] || '📌'} ${Utils.sanitize(t.category)}
                                 </span>
-                                ${t.dueDate ? `<span class="text-[11px] font-semibold text-gray-400">📅 ${Utils.formatDate(t.dueDate)}</span>` : ''}
+                                ${t.dueDate ? `<span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">📅 ${Utils.formatDate(t.dueDate)}</span>` : ''}
                             </div>
                             <h4 class="font-bold text-gray-900 dark:text-white text-base leading-snug ${t.status === 'done' ? 'line-through text-gray-400 dark:text-gray-500' : ''}">
                                 ${Utils.sanitize(t.title)}
@@ -191,7 +191,7 @@ export const Views = {
                             </button>
                         ` : ''}
                         ${t.status !== 'done' ? `
-                            <button onclick="app.logic.completeTask('${t.id}')" class="flex-1 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg hover:bg-emerald-100">
+                            <button onclick="app.logic.completeTask('${t.id}')" class="flex-1 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg hover:bg-emerald-100">
                                 ✅ Tamamla (+10 XP)
                             </button>
                         ` : ''}
@@ -286,11 +286,11 @@ export const Views = {
                     <div class="flex items-start justify-between">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
-                                ${h.icon || '🌱'}
+                                ${Utils.sanitize(h.icon || '🌱')}
                             </div>
                             <div>
                                 <h4 class="font-bold text-gray-900 dark:text-white text-base">${Utils.sanitize(h.title)}</h4>
-                                <span class="text-xs text-gray-400 uppercase tracking-wider">${h.category}</span>
+                                <span class="text-xs text-gray-400 uppercase tracking-wider">${Utils.sanitize(h.category)}</span>
                             </div>
                         </div>
                         <button onclick="app.logic.deleteHabit('${h.id}')" class="text-gray-400 hover:text-rose-500 p-1">
@@ -334,7 +334,7 @@ export const Views = {
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Alışkanlık Takibi</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Günlük serilerini koru, alışkanlıklarını hayatına entegre et.</p>
                 </div>
-                <button onclick="app.ui.openAddHabitModal()" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2">
+                <button onclick="app.ui.openAddHabitModal()" class="px-5 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2">
                     <span>+</span> Yeni Alışkanlık
                 </button>
             </div>
@@ -344,7 +344,7 @@ export const Views = {
                     <div class="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-3xl mx-auto mb-4">🌱</div>
                     <h4 class="text-xl font-bold text-gray-800 dark:text-white">Henüz Alışkanlık Eklemedin</h4>
                     <p class="text-sm text-gray-500 mt-1 max-w-sm mx-auto">Her gün düzenli yapmayı hedeflediğin su içme, kitap okuma veya sporu takibe başla!</p>
-                    <button onclick="app.ui.openAddHabitModal()" class="mt-4 px-6 py-3 bg-emerald-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all">İlk Alışkanlığını Ekle</button>
+                    <button onclick="app.ui.openAddHabitModal()" class="mt-4 px-6 py-3 bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all">İlk Alışkanlığını Ekle</button>
                 </div>
             ` : `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -443,7 +443,7 @@ export const Views = {
                     <div>
                         <div class="flex justify-between items-start mb-4">
                             <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl">
-                                ${r.icon || '🎁'}
+                                ${Utils.sanitize(r.icon || '🎁')}
                             </div>
                             <button data-action="delete-reward" class="text-gray-400 hover:text-rose-500 p-1">
                                 🗑️
@@ -457,7 +457,7 @@ export const Views = {
                             ⚡ ${r.xpCost} XP
                         </span>
                         <button data-action="buy-reward"
-                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${canAfford ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95' : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}" ${!canAfford ? 'disabled' : ''}>
+                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${canAfford ? 'bg-amber-700 text-white shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95' : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}" ${!canAfford ? 'disabled' : ''}>
                             ${canAfford ? 'Satın Al / Harca' : 'Yetersiz XP'}
                         </button>
                     </div>
@@ -540,7 +540,7 @@ export const Views = {
                 <div class="space-y-3">
                     ${Object.values(entries).sort((a, b) => new Date(b.dateStr) - new Date(a.dateStr)).map(e => `
                         <div class="glass-panel p-4 rounded-2xl flex items-start gap-4">
-                            <span class="text-3xl">${e.mood || '📝'}</span>
+                            <span class="text-3xl">${Utils.sanitize(e.mood || '📝')}</span>
                             <div class="flex-1">
                                 <div class="flex justify-between items-center">
                                     <span class="font-bold text-sm text-gray-900 dark:text-white">${Utils.formatDate(e.dateStr)}</span>
@@ -566,7 +566,7 @@ export const Views = {
                 <div class="glass-panel p-8 md:p-12 rounded-3xl flex flex-col items-center max-w-md w-full shadow-2xl relative">
                     <!-- Task Link Selector -->
                     <div class="w-full mb-6">
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 text-center">Odaklanılan Görev</label>
+                        <label for="focus-task-select" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 text-center">Odaklanılan Görev</label>
                         <select id="focus-task-select" class="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
                             <option value="">-- Genel Odaklanma --</option>
                             ${tasks.map(t => `<option value="${t.id}">📌 ${Utils.sanitize(t.title)}</option>`).join('')}
@@ -587,8 +587,8 @@ export const Views = {
 
                     <!-- Ambient Sound Selector (20 Options) -->
                     <div class="w-full mb-6 flex flex-col items-center gap-1.5">
-                        <span class="text-xs font-bold text-gray-400">🎵 Prosedürel Ortam Sesi (20 Ses):</span>
-                        <select onchange="app.logic.setAmbientSound(this.value)" class="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
+                        <label for="ambient-sound-select" class="text-xs font-bold text-gray-400">🎵 Prosedürel Ortam Sesi (20 Ses):</label>
+                        <select id="ambient-sound-select" aria-label="Prosedürel Ortam Sesi Seç" onchange="app.logic.setAmbientSound(this.value)" class="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 text-xs font-bold outline-none text-gray-800 dark:text-white">
                             <option value="none">Sessiz 🔇</option>
                             <option value="rain">1. Hafif Yağmur 🌧️</option>
                             <option value="storm">2. Şiddetli Fırtına ⛈️</option>
@@ -626,8 +626,8 @@ export const Views = {
                     <!-- Presets -->
                     <div class="flex gap-2 mt-8 w-full">
                         <button onclick="app.logic.setTimerMode(25, 'Pomodoro')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">25 Dk Odak</button>
-                        <button onclick="app.logic.setTimerMode(5, 'Kısa Mola')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 transition-colors">5 Dk Mola</button>
-                        <button onclick="app.logic.setTimerMode(15, 'Uzun Mola')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 transition-colors">15 Dk Mola</button>
+                        <button onclick="app.logic.setTimerMode(5, 'Kısa Mola')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 transition-colors">5 Dk Mola</button>
+                        <button onclick="app.logic.setTimerMode(15, 'Uzun Mola')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 transition-colors">15 Dk Mola</button>
                     </div>
                 </div>
             </div>

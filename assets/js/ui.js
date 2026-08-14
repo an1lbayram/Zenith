@@ -151,20 +151,20 @@ export const UI = {
                         <span class="w-8 h-8 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold text-lg">+</span>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Yeni Görev</h3>
                     </div>
-                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
+                    <button type="button" aria-label="Kapat" class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 <form class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Görev Başlığı</label>
-                        <input type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all text-gray-800 dark:text-white" placeholder="Ne yapılması gerekiyor?">
+                        <label for="qa-title" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Görev Başlığı</label>
+                        <input id="qa-title" type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all text-gray-800 dark:text-white" placeholder="Ne yapılması gerekiyor?">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Kategori</label>
-                            <select name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                            <label for="qa-category" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Kategori</label>
+                            <select id="qa-category" name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                                 <option value="work">💼 İş</option>
                                 <option value="personal">👤 Kişisel</option>
                                 <option value="study">📚 Eğitim</option>
@@ -172,8 +172,8 @@ export const UI = {
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Öncelik</label>
-                            <select name="priority" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                            <label for="qa-priority" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Öncelik</label>
+                            <select id="qa-priority" name="priority" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                                 <option value="normal">Normal 🔹</option>
                                 <option value="high">Yüksek 🔥</option>
                                 <option value="urgent">Acil 🚨</option>
@@ -183,22 +183,22 @@ export const UI = {
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Teslim Tarihi</label>
-                        <input type="date" name="dueDate" value="${todayIso}" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                        <label for="qa-duedate" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Teslim Tarihi</label>
+                        <input id="qa-duedate" type="date" name="dueDate" value="${todayIso}" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Notlar / Açıklama</label>
-                        <textarea name="notes" rows="2" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white" placeholder="Ek detaylar..."></textarea>
+                        <label for="qa-notes" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Notlar / Açıklama</label>
+                        <textarea id="qa-notes" name="notes" rows="2" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white" placeholder="Ek detaylar..."></textarea>
                     </div>
 
                     <div class="pt-1">
-                        <span class="block text-xs font-semibold text-gray-400 mb-2">Hızlı Şablonlar:</span>
+                        <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Hızlı Şablonlar:</span>
                         <div class="flex gap-2 overflow-x-auto pb-1">
-                            <button type="button" onclick="app.logic.applyTemplate('workout')" class="px-3 py-1.5 text-xs rounded-xl bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-300 font-medium hover:bg-blue-500/20 transition-colors whitespace-nowrap">💪 Spor Salonu</button>
-                            <button type="button" onclick="app.logic.applyTemplate('study')" class="px-3 py-1.5 text-xs rounded-xl bg-purple-500/10 text-purple-500 dark:bg-purple-500/20 dark:text-purple-300 font-medium hover:bg-purple-500/20 transition-colors whitespace-nowrap">📚 Ders Çalışma</button>
-                            <button type="button" onclick="app.logic.applyTemplate('shopping')" class="px-3 py-1.5 text-xs rounded-xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20 dark:text-emerald-300 font-medium hover:bg-emerald-500/20 transition-colors whitespace-nowrap">🛒 Alışveriş</button>
-                            <button type="button" onclick="app.logic.applyTemplate('meeting')" class="px-3 py-1.5 text-xs rounded-xl bg-amber-500/10 text-amber-500 dark:bg-amber-500/20 dark:text-amber-300 font-medium hover:bg-amber-500/20 transition-colors whitespace-nowrap">📅 Toplantı</button>
+                            <button type="button" onclick="app.logic.applyTemplate('workout')" class="px-3 py-1.5 text-xs rounded-xl bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 font-medium hover:bg-blue-500/20 transition-colors whitespace-nowrap">💪 Spor Salonu</button>
+                            <button type="button" onclick="app.logic.applyTemplate('study')" class="px-3 py-1.5 text-xs rounded-xl bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 font-medium hover:bg-purple-500/20 transition-colors whitespace-nowrap">📚 Ders Çalışma</button>
+                            <button type="button" onclick="app.logic.applyTemplate('shopping')" class="px-3 py-1.5 text-xs rounded-xl bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-medium hover:bg-emerald-500/20 transition-colors whitespace-nowrap">🛒 Alışveriş</button>
+                            <button type="button" onclick="app.logic.applyTemplate('meeting')" class="px-3 py-1.5 text-xs rounded-xl bg-amber-500/10 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 font-medium hover:bg-amber-500/20 transition-colors whitespace-nowrap">📅 Toplantı</button>
                         </div>
                     </div>
 
@@ -225,20 +225,20 @@ export const UI = {
                         <span class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold text-lg">🌱</span>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Yeni Alışkanlık</h3>
                     </div>
-                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
+                    <button type="button" aria-label="Kapat" class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 <form class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Alışkanlık Adı</label>
-                        <input type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none text-gray-800 dark:text-white" placeholder="Örn: 2 Litre Su İç, 15 Dk Yürüyüş">
+                        <label for="habit-title" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Alışkanlık Adı</label>
+                        <input id="habit-title" type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none text-gray-800 dark:text-white" placeholder="Örn: 2 Litre Su İç, 15 Dk Yürüyüş">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">İkon / Emoji</label>
-                            <select name="icon" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-lg">
+                            <label for="habit-icon" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">İkon / Emoji</label>
+                            <select id="habit-icon" name="icon" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-lg">
                                 <option value="💧">💧 Su</option>
                                 <option value="📚">📚 Okuma</option>
                                 <option value="🏃">🏃 Egzersiz</option>
@@ -250,8 +250,8 @@ export const UI = {
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Sıklık</label>
-                            <select name="frequency" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                            <label for="habit-frequency" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Sıklık</label>
+                            <select id="habit-frequency" name="frequency" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                                 <option value="daily">Her Gün</option>
                                 <option value="weekdays">Hafta İçi</option>
                             </select>
@@ -259,8 +259,8 @@ export const UI = {
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Kategori</label>
-                        <select name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                        <label for="habit-category" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Kategori</label>
+                        <select id="habit-category" name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                             <option value="health">🏃 Sağlık</option>
                             <option value="personal">👤 Kişisel Gelişim</option>
                             <option value="study">📚 Eğitim / Zihin</option>
@@ -268,7 +268,7 @@ export const UI = {
                         </select>
                     </div>
 
-                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-2">
+                    <button type="submit" class="w-full py-3.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-2">
                         Alışkanlık Ekle (+15 XP Hedefi)
                     </button>
                 </form>
@@ -290,24 +290,24 @@ export const UI = {
                         <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold text-lg">🎁</span>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Yeni Ödül Tanımla</h3>
                     </div>
-                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
+                    <button type="button" aria-label="Kapat" class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 <form class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Ödül Başlığı</label>
-                        <input type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white" placeholder="Örn: 1 Saat Oyun Oyna, Dondurma Ye">
+                        <label for="reward-title" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Ödül Başlığı</label>
+                        <input id="reward-title" type="text" name="title" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white" placeholder="Örn: 1 Saat Oyun Oyna, Dondurma Ye">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">XP Maliyeti</label>
-                            <input type="number" name="xpCost" value="50" min="10" step="10" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-bold">
+                            <label for="reward-xpcost" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">XP Maliyeti</label>
+                            <input id="reward-xpcost" type="number" name="xpCost" value="50" min="10" step="10" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-bold">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">İkon / Emoji</label>
-                            <select name="icon" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-lg">
+                            <label for="reward-icon" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">İkon / Emoji</label>
+                            <select id="reward-icon" name="icon" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white text-lg">
                                 <option value="🎮">🎮 Oyun</option>
                                 <option value="☕">☕ Kahve</option>
                                 <option value="🎬">🎬 Dizi / Film</option>
@@ -318,7 +318,7 @@ export const UI = {
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl shadow-lg shadow-amber-500/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-2">
+                    <button type="submit" class="w-full py-3.5 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-500/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-2">
                         Ödülü Markete Ekle
                     </button>
                 </form>
@@ -336,7 +336,7 @@ export const UI = {
         const task = store.state.tasks.find(t => t.id === taskId);
         if (!task) return;
 
-        const subtaskHtml = (task.subtasks || []).map((sub, i) => `
+        const subtaskHtml = (task.subtasks || []).map((sub) => `
             <div class="flex items-center gap-2 mb-2">
                 <input type="checkbox" ${sub.completed ? 'checked' : ''} onchange="app.logic.toggleSubtask('${task.id}', '${sub.id}')" class="w-4 h-4 text-primary rounded border-gray-300">
                 <span class="text-sm flex-1 text-gray-700 dark:text-gray-300 ${sub.completed ? 'line-through opacity-60' : ''}">${Utils.sanitize(sub.text)}</span>
@@ -347,19 +347,19 @@ export const UI = {
             <div class="p-6">
                 <div class="flex justify-between items-center mb-5">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Görevi Düzenle</h3>
-                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg">
+                    <button type="button" aria-label="Kapat" class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 <form class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Başlık</label>
-                        <input type="text" name="title" value="${Utils.sanitize(task.title)}" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
+                        <label for="edit-title" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Başlık</label>
+                        <input id="edit-title" type="text" name="title" value="${Utils.sanitize(task.title)}" required class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white font-medium">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori</label>
-                            <select name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
+                            <label for="edit-category" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori</label>
+                            <select id="edit-category" name="category" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
                                 <option value="work" ${task.category === 'work' ? 'selected' : ''}>💼 İş</option>
                                 <option value="personal" ${task.category === 'personal' ? 'selected' : ''}>👤 Kişisel</option>
                                 <option value="study" ${task.category === 'study' ? 'selected' : ''}>📚 Eğitim</option>
@@ -367,8 +367,8 @@ export const UI = {
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Öncelik</label>
-                            <select name="priority" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
+                            <label for="edit-priority" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Öncelik</label>
+                            <select id="edit-priority" name="priority" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
                                 <option value="normal" ${task.priority === 'normal' ? 'selected' : ''}>Normal 🔹</option>
                                 <option value="high" ${task.priority === 'high' ? 'selected' : ''}>Yüksek 🔥</option>
                                 <option value="urgent" ${task.priority === 'urgent' ? 'selected' : ''}>Acil 🚨</option>
@@ -378,13 +378,13 @@ export const UI = {
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Teslim Tarihi</label>
-                        <input type="date" name="dueDate" value="${task.dueDate || ''}" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
+                        <label for="edit-duedate" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Teslim Tarihi</label>
+                        <input id="edit-duedate" type="date" name="dueDate" value="${task.dueDate || ''}" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Notlar</label>
-                        <textarea name="notes" rows="2" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">${Utils.sanitize(task.notes || '')}</textarea>
+                        <label for="edit-notes" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Notlar</label>
+                        <textarea id="edit-notes" name="notes" rows="2" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600 outline-none text-gray-800 dark:text-white">${Utils.sanitize(task.notes || '')}</textarea>
                     </div>
 
                     <div>
@@ -418,13 +418,13 @@ export const UI = {
 
         const achievementListHtml = achievements.map(ach => `
             <div class="flex items-center gap-3 p-3 rounded-xl ${ach.unlocked ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-gray-100 dark:bg-gray-800/60 opacity-60'}">
-                <span class="text-2xl">${ach.icon}</span>
+                <span class="text-2xl">${Utils.sanitize(ach.icon)}</span>
                 <div class="flex-1">
                     <div class="flex items-center gap-2">
-                        <span class="font-bold text-sm text-gray-800 dark:text-white">${ach.name}</span>
-                        ${ach.unlocked ? '<span class="text-[10px] bg-amber-500 text-white font-bold px-1.5 py-0.5 rounded-full">KAZANILDI</span>' : ''}
+                        <span class="font-bold text-sm text-gray-800 dark:text-white">${Utils.sanitize(ach.name)}</span>
+                        ${ach.unlocked ? '<span class="text-[10px] bg-amber-700 text-white font-bold px-1.5 py-0.5 rounded-full">KAZANILDI</span>' : ''}
                     </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">${ach.desc}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">${Utils.sanitize(ach.desc)}</p>
                 </div>
             </div>
         `).join('');
@@ -435,7 +435,7 @@ export const UI = {
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profil ve Başarımlar</h3>
-                    <button class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg">
+                    <button type="button" aria-label="Kapat" class="modal-close p-1 text-gray-400 hover:text-rose-500 rounded-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
@@ -444,12 +444,12 @@ export const UI = {
                     <div class="flex items-center gap-4">
                         <button type="button" onclick="app.ui.toggleAvatarPicker()" title="Avatarı değiştir"
                             class="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-primary/30 hover:scale-105 transition-transform flex-shrink-0">
-                            <span id="profile-avatar-emoji">${user.avatar}</span>
+                            <span id="profile-avatar-emoji">${Utils.sanitize(user.avatar)}</span>
                             <span class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow">✏️</span>
                         </button>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <input type="text" id="profile-name-input" maxlength="24" value="${Utils.sanitize(user.name)}" onchange="app.logic.updateProfileName(this.value)" class="font-bold text-lg text-gray-900 dark:text-white bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-primary outline-none w-full">
+                                <input type="text" id="profile-name-input" maxlength="24" value="${Utils.sanitize(user.name)}" oninput="app.logic.autosaveProfileName(this.value)" onchange="app.logic.updateProfileName(this.value)" class="font-bold text-lg text-gray-900 dark:text-white bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-primary outline-none w-full">
                             </div>
                             <p class="text-xs text-primary font-bold mt-1">Seviye ${store.state.level} (${store.state.xp} total XP)</p>
                         </div>

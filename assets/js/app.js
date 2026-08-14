@@ -1,7 +1,6 @@
 import { store } from './store.js';
 import { UI } from './ui.js';
 import { Router } from './router.js';
-import { Views } from './views.js';
 import { Utils } from './utils.js';
 
 // PWA Install Prompt State
@@ -30,6 +29,22 @@ const app = {
             const input = document.getElementById('profile-name-input');
             if (input) input.value = finalName;
             UI.showToast('İsim güncellendi!', 'success');
+        },
+
+        // Debounced autosave fired on every keystroke (see profile-name-input's
+        // oninput in ui.js), not just on blur/onchange. Mobile browsers -
+        // especially inside a position:fixed modal that the on-screen
+        // keyboard shifts around - don't reliably fire blur/change, which
+        // made name edits appear to silently not save on mobile. This saves
+        // continuously so the result never depends on blur firing at all.
+        // Deliberately does NOT touch input.value (would reset the caret
+        // mid-typing) or show a toast (would fire on every keystroke).
+        _autosaveProfileName: Utils.debounce((value) => {
+            const trimmed = (value || '').trim().slice(0, 24);
+            store.updateProfile({ name: trimmed || 'Kullanıcı' });
+        }, 400),
+        autosaveProfileName(value) {
+            this._autosaveProfileName(value);
         },
 
         setProfileAvatar: (emoji) => {
@@ -113,13 +128,11 @@ const app = {
             if (confirm('Bu alışkanlığı silmek istediğinize emin misiniz?')) {
                 store.deleteHabit(id);
                 UI.showToast('Alışkanlık silindi', 'info');
-                Router.render();
             }
         },
 
         toggleHabitDate: (id, dateStr) => {
             store.toggleHabitDate(id, dateStr);
-            Router.render();
         },
 
         // Reward Shop Handlers
@@ -443,7 +456,11 @@ store.subscribe((state) => {
     if (xpEl) xpEl.textContent = `${state.xp} XP`;
     if (badgeEl) badgeEl.textContent = `Lvl ${state.level}`;
 
-    if (Router.currentRoute === 'tasks' || Router.currentRoute === 'dashboard' || Router.currentRoute === 'shop') {
+    // Focus is excluded: its countdown updates its own DOM imperatively
+    // (updateTimerDisplay) for smooth per-second ticking, and a full re-render
+    // here would reset that display without restarting the interval.
+    const reactiveRoutes = ['tasks', 'dashboard', 'shop', 'habits', 'calendar', 'journal'];
+    if (reactiveRoutes.includes(Router.currentRoute)) {
         Router.render();
     }
 });

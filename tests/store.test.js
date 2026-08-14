@@ -233,6 +233,100 @@ describe('checkAchievements', () => {
     });
 });
 
+describe('reward shop actions', () => {
+    it('addReward prepends a reward with sane defaults', () => {
+        const before = store.state.rewards.length;
+        const reward = store.addReward({ title: 'Özel Ödül' });
+
+        expect(store.state.rewards.length).toBe(before + 1);
+        expect(store.state.rewards[0].id).toBe(reward.id);
+        expect(reward.xpCost).toBe(50);
+        expect(reward.icon).toBe('🎁');
+    });
+
+    it('addReward coerces a numeric-string xpCost and falls back to 50 when invalid', () => {
+        expect(store.addReward({ title: 'A', xpCost: '75' }).xpCost).toBe(75);
+        expect(store.addReward({ title: 'B', xpCost: 'not-a-number' }).xpCost).toBe(50);
+    });
+
+    it('deleteReward removes only the targeted reward', () => {
+        const reward = store.addReward({ title: 'Silinecek' });
+        store.deleteReward(reward.id);
+        expect(store.state.rewards.find((r) => r.id === reward.id)).toBeUndefined();
+    });
+
+    it('spendXP deducts XP exactly at the boundary (xp === cost)', () => {
+        store.addXP(50);
+        expect(store.spendXP(50)).toBe(true);
+        expect(store.state.xp).toBe(0);
+    });
+});
+
+describe('daily journal', () => {
+    it('saveJournalEntry stores the entry keyed by date and awards 10 XP', () => {
+        const xpBefore = store.state.xp;
+        store.saveJournalEntry('2026-01-05', '🚀', 'Harika bir gündü');
+
+        expect(store.state.journalEntries['2026-01-05']).toEqual({
+            dateStr: '2026-01-05',
+            mood: '🚀',
+            note: 'Harika bir gündü',
+        });
+        expect(store.state.xp).toBe(xpBefore + 10);
+    });
+
+    it('saving again for the same date overwrites rather than duplicating', () => {
+        store.saveJournalEntry('2026-01-05', '😊', 'İlk not');
+        store.saveJournalEntry('2026-01-05', '😓', 'Güncellenmiş not');
+
+        expect(Object.keys(store.state.journalEntries)).toHaveLength(1);
+        expect(store.state.journalEntries['2026-01-05'].mood).toBe('😓');
+        expect(store.state.journalEntries['2026-01-05'].note).toBe('Güncellenmiş not');
+    });
+});
+
+describe('activity log', () => {
+    it('logActivity records type, date, and timestamp', () => {
+        store.logActivity('pomodoro');
+        expect(store.state.activityLog[0]).toMatchObject({ type: 'pomodoro' });
+        expect(store.state.activityLog[0].dateStr).toBe(Utils.toISODateString());
+        expect(typeof store.state.activityLog[0].timestamp).toBe('number');
+    });
+
+    it('caps the activity log at 300 entries, dropping the oldest', () => {
+        for (let i = 0; i < 305; i++) {
+            store.logActivity('task_complete');
+        }
+        expect(store.state.activityLog.length).toBe(300);
+    });
+});
+
+describe('persistence', () => {
+    it('notify() persists state to localStorage under the versioned key', () => {
+        store.addTask({ title: 'Kalıcı görev' });
+        const saved = JSON.parse(localStorage.getItem('zenith_state_v3'));
+        expect(saved.tasks.some((t) => t.title === 'Kalıcı görev')).toBe(true);
+    });
+
+    it('loadFromStorage falls back to defaults when tasks in storage are corrupt (not an array)', async () => {
+        localStorage.setItem('zenith_state_v3', JSON.stringify({ tasks: 'not-an-array', xp: 5 }));
+        vi.resetModules();
+        const { store: reloaded } = await import('../assets/js/store.js');
+
+        expect(Array.isArray(reloaded.state.tasks)).toBe(true);
+        expect(reloaded.state.xp).toBe(5);
+    });
+
+    it('loadFromStorage survives unparseable JSON without throwing', async () => {
+        localStorage.setItem('zenith_state_v3', '{ not valid json');
+        vi.resetModules();
+        const { store: reloaded } = await import('../assets/js/store.js');
+
+        expect(reloaded.state.xp).toBe(0);
+        expect(Array.isArray(reloaded.state.tasks)).toBe(true);
+    });
+});
+
 describe('export / import', () => {
     it('round-trips state through exportData/importData', () => {
         store.addTask({ title: 'Yedeklenecek görev' });

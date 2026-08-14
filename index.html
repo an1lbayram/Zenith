@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenith | Yaşam ve Görev Yönetim Sistemi</title>
 
     <!-- SEO Meta Tags -->
@@ -52,7 +52,7 @@
     <div class="flex h-screen overflow-hidden">
 
         <!-- Sidebar Navigation (Desktop & Tablet) -->
-        <nav class="hidden md:flex flex-col w-20 lg:w-64 glass-panel border-r z-20 transition-all duration-300">
+        <nav data-testid="desktop-sidebar" class="hidden md:flex flex-col w-20 lg:w-64 glass-panel border-r z-20 transition-all duration-300">
             <!-- App Logo / Title -->
             <div class="p-6 flex items-center justify-center lg:justify-start gap-3">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-emerald-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/30 cursor-pointer overflow-hidden p-0.5" onclick="app.router.navigate('dashboard')">
@@ -180,6 +180,15 @@
                         <span class="hidden sm:inline">Uygulamayı Yükle</span>
                     </button>
 
+                    <!-- Profile (mobile only, desktop uses sidebar widget) -->
+                    <button onclick="app.ui.openProfileModal()" title="Profil"
+                        class="md:hidden p-2 rounded-2xl hover:bg-gray-200/60 dark:hover:bg-gray-700/60 transition-colors text-gray-600 dark:text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </button>
+
                     <!-- Dark Mode Toggle -->
                     <button onclick="app.ui.toggleDarkMode()" title="Tema Değiştir"
                         class="p-2 rounded-2xl hover:bg-gray-200/60 dark:hover:bg-gray-700/60 transition-colors text-gray-600 dark:text-gray-300">
@@ -203,7 +212,7 @@
             </div>
 
             <!-- Mobile Bottom Navigation -->
-            <div class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t flex justify-around items-center p-2 z-30 shadow-2xl">
+            <div data-testid="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t flex justify-around items-center p-2 z-30 shadow-2xl">
                 <button onclick="app.router.navigate('dashboard')" data-nav-route="dashboard"
                     class="flex flex-col items-center text-[10px] gap-0.5 text-primary font-bold">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,6 +233,15 @@
                     <span>Görevler</span>
                 </button>
 
+                <button onclick="app.router.navigate('habits')" data-nav-route="habits"
+                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>Alışkanlık</span>
+                </button>
+
                 <button onclick="app.router.navigate('calendar')" data-nav-route="calendar"
                     class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +251,7 @@
                     <span>Takvim</span>
                 </button>
 
-                <button onclick="app.ui.openQuickAdd()" class="flex flex-col items-center justify-center -mt-6 focus:outline-none">
+                <button data-testid="add-task-trigger" onclick="app.ui.openQuickAdd()" class="flex flex-col items-center justify-center -mt-6 focus:outline-none">
                     <div class="w-12 h-12 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-white text-xl font-black transform active:scale-90 transition-transform">
                         +
                     </div>
@@ -270,7 +288,7 @@
     </div>
 
     <!-- Desktop Global Floating Action Button (FAB) -->
-    <button onclick="app.ui.openQuickAdd()" title="Yeni Görev Ekle"
+    <button data-testid="add-task-trigger" onclick="app.ui.openQuickAdd()" title="Yeni Görev Ekle"
         class="hidden md:flex fixed bottom-8 right-8 w-14 h-14 bg-primary rounded-full shadow-2xl shadow-primary/50 items-center justify-center text-white text-2xl font-bold hover:scale-110 active:scale-95 transition-transform z-40">
         +
     </button>

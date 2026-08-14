@@ -11,3 +11,11 @@ assets/css/tailwind.css
 # IDE & Config
 .vscode/
 .idea/
+
+# Test tooling output (visual regression baselines in e2e/*-snapshots/ ARE
+# committed - only the ephemeral run artifacts below are ignored)
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+coverage/

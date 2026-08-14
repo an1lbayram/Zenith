@@ -276,7 +276,7 @@ class Store {
         this.notify();
     }
 
-    spendXP(amount, rewardTitle) {
+    spendXP(amount) {
         if (this.state.xp >= amount) {
             this.state.xp -= amount;
             if (this.state.settings.soundEnabled) Utils.playChime('purchase');
@@ -353,11 +353,27 @@ class Store {
     importData(jsonString) {
         try {
             const data = JSON.parse(jsonString);
-            if (data && typeof data === 'object') {
-                this.state = { ...this.state, ...data };
-                this.notify();
-                return true;
-            }
+            if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+
+            // Mirror loadFromStorage's per-field guards so a malformed/tampered
+            // backup can't replace a required array/object with a scalar and
+            // crash later renders (e.g. tasks.filter on a string).
+            this.state = {
+                ...this.state,
+                ...data,
+                user: { ...this.state.user, ...(data.user || {}) },
+                settings: { ...this.state.settings, ...(data.settings || {}) },
+                tasks: Array.isArray(data.tasks) ? data.tasks : this.state.tasks,
+                habits: Array.isArray(data.habits) ? data.habits : this.state.habits,
+                rewards: Array.isArray(data.rewards) ? data.rewards : this.state.rewards,
+                journalEntries: (data.journalEntries && typeof data.journalEntries === 'object' && !Array.isArray(data.journalEntries))
+                    ? data.journalEntries
+                    : this.state.journalEntries,
+                activityLog: Array.isArray(data.activityLog) ? data.activityLog : this.state.activityLog,
+                achievements: Array.isArray(data.achievements) ? data.achievements : this.state.achievements,
+            };
+            this.notify();
+            return true;
         } catch (e) {
             console.error('Import error:', e);
         }
