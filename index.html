@@ -212,77 +212,96 @@
             </div>
 
             <!-- Mobile Bottom Navigation -->
-            <div data-testid="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t flex justify-around items-center p-2 z-30 shadow-2xl">
-                <button onclick="app.router.navigate('dashboard')" data-nav-route="dashboard"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-primary font-bold">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                        </path>
-                    </svg>
-                    <span>Panel</span>
-                </button>
+            <div data-testid="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t z-30 shadow-2xl pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+                <div class="relative flex items-center justify-between px-1.5 py-1.5">
+                    <!-- Left Navigation Group (4 items) -->
+                    <div class="flex-1 flex justify-around items-center pr-6">
+                        <button onclick="app.router.navigate('dashboard')" data-nav-route="dashboard"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-primary font-bold transition-all" title="Panel">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                </path>
+                            </svg>
+                            <span>Panel</span>
+                        </button>
 
-                <button onclick="app.router.navigate('tasks')" data-nav-route="tasks"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
-                        </path>
-                    </svg>
-                    <span>Görevler</span>
-                </button>
+                        <button onclick="app.router.navigate('tasks')" data-nav-route="tasks"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Görevler">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                </path>
+                            </svg>
+                            <span>Görevler</span>
+                        </button>
 
-                <button onclick="app.router.navigate('habits')" data-nav-route="habits"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    <span>Alışkanlık</span>
-                </button>
+                        <button onclick="app.router.navigate('habits')" data-nav-route="habits"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Alışkanlıklar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span>Alışkanlık</span>
+                        </button>
 
-                <button onclick="app.router.navigate('calendar')" data-nav-route="calendar"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>Takvim</span>
-                </button>
-
-                <button data-testid="add-task-trigger" onclick="app.ui.openQuickAdd()" class="flex flex-col items-center justify-center -mt-6 focus:outline-none">
-                    <div class="w-12 h-12 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-white text-xl font-black transform active:scale-90 transition-transform">
-                        +
+                        <button onclick="app.router.navigate('calendar')" data-nav-route="calendar"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Takvim">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Takvim</span>
+                        </button>
                     </div>
-                </button>
 
-                <button onclick="app.router.navigate('shop')" data-nav-route="shop"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                    </svg>
-                    <span>Market</span>
-                </button>
+                    <!-- Center Floating Action Button (+) Perfectly Centered -->
+                    <button data-testid="add-task-trigger" onclick="app.ui.openQuickAdd()" title="Yeni Görev Ekle"
+                        class="absolute left-1/2 -translate-x-1/2 -top-5 flex flex-col items-center justify-center focus:outline-none z-40 group">
+                        <div class="w-12 h-12 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-white text-2xl font-black transform group-active:scale-90 group-hover:scale-105 transition-all">
+                            +
+                        </div>
+                    </button>
 
-                <button onclick="app.router.navigate('journal')" data-nav-route="journal"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    <span>Günlük</span>
-                </button>
+                    <!-- Right Navigation Group (4 items) -->
+                    <div class="flex-1 flex justify-around items-center pl-6">
+                        <button onclick="app.router.navigate('shop')" data-nav-route="shop"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Ödül Marketi">
+                            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                            <span>Market</span>
+                        </button>
 
-                <button onclick="app.router.navigate('focus')" data-nav-route="focus"
-                    class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Odak</span>
-                </button>
+                        <button onclick="app.router.navigate('journal')" data-nav-route="journal"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Günlük & Notlar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span>Günlük</span>
+                        </button>
+
+                        <button onclick="app.router.navigate('focus')" data-nav-route="focus"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 transition-all" title="Odak Modu">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Odak</span>
+                        </button>
+
+                        <button onclick="app.ui.openProfileModal()"
+                            class="flex flex-col items-center text-[10px] gap-0.5 text-gray-500 dark:text-gray-400 hover:text-primary transition-all" title="Profil & Ayarlar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span>Profil</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
