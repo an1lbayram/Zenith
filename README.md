@@ -2,7 +2,7 @@
 
 **Zenith**, günlük işlerinizi, alışkanlıklarınızı, odaklanma seanslarınızı ve zihin notlarınızı tek bir platformda oyunlaştırarak yönetmenizi sağlayan modern, hızlı ve duyarlı bir web uygulamasıdır.
 
-🔗 **Canlı Demo & Geliştirici:** [an1lbayram.vercel.app](https://an1lbayram-github-io.vercel.app/)  
+🔗 **Canlı Demo & Geliştirici:** [an1lbayram.vercel.app](https://an1lbayram.vercel.app/)  
 📦 **GitHub Reposu:** [github.com/an1lbayram/Zenith](https://github.com/an1lbayram/Zenith)
 
 ---
@@ -144,4 +144,4 @@ Zenith/
 
 ---
 
-Made with ❤️ by [an1lbayram](https://an1lbayram-github-io.vercel.app/)
+Made with ❤️ by [an1lbayram](https://an1lbayram.vercel.app/)
